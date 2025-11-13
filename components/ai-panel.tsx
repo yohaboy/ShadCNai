@@ -15,6 +15,7 @@ interface AIPanelProps {
 export function AIPanel({ onGenerateFile, projectContext, isOpen = true }: AIPanelProps) {
   const [prompt, setPrompt] = useState("")
   const [generatedCode, setGeneratedCode] = useState("")
+  const [generatedFiles, setGeneratedFiles] = useState<Record<string, string>>({})
   const [filename, setFilename] = useState("")
   const { generateCode, loading, error } = useAIGeneration()
 
@@ -22,24 +23,34 @@ export function AIPanel({ onGenerateFile, projectContext, isOpen = true }: AIPan
     if (!prompt.trim()) return
 
     try {
-      const code = await generateCode(prompt, projectContext)
-      setGeneratedCode(code)
+      const files = await generateCode(prompt, projectContext)
+      setGeneratedFiles(files)
       setPrompt("")
     } catch (err) {
       console.error("Generation failed:", err)
     }
   }
 
-  const handleSaveGenerated = () => {
-    if (!generatedCode || !filename) {
-      alert("Please enter a filename")
-      return
-    }
+  const saveFilesRecursively = (basePath: string, files: Record<string, any>) => {
+    Object.entries(files).forEach(([name, content]) => {
+      const fullPath = basePath ? `${basePath}/${name}` : name
 
-    onGenerateFile(filename, generatedCode)
-    setGeneratedCode("")
-    setFilename("")
+      if (typeof content === "string") {
+        // It's a file
+        onGenerateFile(fullPath, content)
+      } else if (typeof content === "object") {
+        // It's a folder, recurse
+        saveFilesRecursively(fullPath, content)
+      }
+    })
   }
+
+
+  const handleSaveAll = () => {
+    saveFilesRecursively("", generatedFiles)
+    setGeneratedFiles({})
+  }
+
 
   return (
     <div className="w-96 bg-[#252526] border-l border-[#3e3e42] flex flex-col">
@@ -70,26 +81,29 @@ export function AIPanel({ onGenerateFile, projectContext, isOpen = true }: AIPan
         )}
 
         {/* Generated code preview */}
-        {generatedCode && (
+        {Object.keys(generatedFiles).length > 0 && (
           <div className="space-y-2">
-            <label className="text-xs font-medium text-gray-400 uppercase tracking-wide">Generated Code</label>
-            <div className="bg-[#1e1e1e] border border-[#3e3e42] rounded p-3 max-h-40 overflow-auto">
-              <pre className="text-xs text-gray-300 font-mono whitespace-pre-wrap break-words">
-                {generatedCode.substring(0, 500)}
-                {generatedCode.length > 500 && "..."}
-              </pre>
+            <label className="text-xs font-medium text-gray-400 uppercase tracking-wide">Generated Files</label>
+            <div className="bg-[#1e1e1e] border border-[#3e3e42] rounded p-3 max-h-60 overflow-auto text-xs text-gray-300 font-mono">
+            {Object.entries(generatedFiles).map(([path, code]) => {
+              const content = typeof code === "string" ? code : JSON.stringify(code, null, 2);
+              return (
+                <div key={path} className="mb-2">
+                  <div className="font-bold">{path}</div>
+                  <pre className="whitespace-pre-wrap break-words">
+                    {content.substring(0, 200)}
+                    {content.length > 200 && "..."}
+                  </pre>
+                </div>
+              );
+            })}
             </div>
 
-            <input
-              type="text"
-              value={filename}
-              onChange={(e) => setFilename(e.target.value)}
-              placeholder="e.g., components/my-button.tsx"
-              className="w-full px-3 py-2 bg-[#3e3e42] border border-[#3e3e42] text-white text-sm rounded focus:border-[#0e639c] outline-none"
-            />
-
-            <Button onClick={handleSaveGenerated} className="w-full bg-green-600 hover:bg-green-700 text-sm">
-              Save File
+            <Button
+              onClick={handleSaveAll}
+              className="w-full bg-green-600 hover:bg-green-700 text-sm"
+            >
+              Save All Files
             </Button>
           </div>
         )}

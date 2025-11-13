@@ -6,36 +6,35 @@ export function useAIGeneration() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const generateCode = useCallback(async (prompt: string, projectContext?: string, fileType?: string) => {
-    setLoading(true)
-    setError(null)
+  const generateCode = useCallback(
+      async (prompt: string, projectContext?: string) => {
+        setLoading(true);
+        setError(null);
 
-    try {
-      const response = await fetch("/api/ai/generate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          prompt,
-          projectContext,
-          fileType,
-        }),
-      })
+        try {
+          const response = await fetch("/api/ai/generate", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ prompt, projectContext }),
+          });
 
-      const data = await response.json()
+          const data = await response.json();
 
-      if (!response.ok) {
-        throw new Error(data.error || "Failed to generate code")
-      }
+          if (!data.success || !data.files) {
+            throw new Error(data.error || "Failed to generate code");
+          }
 
-      return data.code
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "Unknown error occurred"
-      setError(errorMessage)
-      throw err
-    } finally {
-      setLoading(false)
-    }
-  }, [])
+          return data.files;
+        } catch (err) {
+          const errorMessage = err instanceof Error ? err.message : "Unknown error occurred";
+          setError(errorMessage);
+          throw err;
+        } finally {
+          setLoading(false);
+        }
+      },
+      []
+  );
 
   const refineCode = useCallback(async (code: string, instruction: string) => {
     setLoading(true)
