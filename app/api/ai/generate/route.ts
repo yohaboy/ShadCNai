@@ -1,17 +1,18 @@
-import { type NextRequest, NextResponse } from "next/server"
-import { generateText } from "ai"
+import { NextRequest, NextResponse } from "next/server";
+import { GoogleGenAI } from "@google/genai";
+
+const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
 export async function POST(request: NextRequest) {
   try {
-    const { prompt, projectContext, fileType } = await request.json()
+    const { prompt, projectContext, fileType } = await request.json();
 
     if (!prompt) {
-      return NextResponse.json({ error: "Missing prompt" }, { status: 400 })
+      return NextResponse.json({ error: "Missing prompt" }, { status: 400 });
     }
 
     const systemPrompt = `You are an expert code generator for a Next.js project builder. 
 Generate clean, production-ready code based on the user's request.
-When generating code, follow these guidelines:
 - Use React hooks for state management
 - Write TypeScript when appropriate
 - Include proper error handling
@@ -20,26 +21,19 @@ When generating code, follow these guidelines:
 ${fileType ? `- Generate ${fileType} code` : ""}
 ${projectContext ? `- Consider this project context: ${projectContext}` : ""}
 
-Return ONLY the code, no explanations.`
+Return ONLY the code, no explanations.`;
 
-    const { text } = await generateText({
-      model: "openai/gpt-4-mini",
-      system: systemPrompt,
-      prompt: prompt,
-      temperature: 0.7,
-    })
+    const response = await ai.models.generateContent({
+      model: "gemini-2.5-flash",
+      contents: systemPrompt + "\n\n" + prompt,
+    });
 
-    return NextResponse.json({
-      success: true,
-      code: text,
-    })
+    return NextResponse.json({ success: true, code: response.text });
   } catch (error) {
-    console.error("AI generation error:", error)
+    console.error("AI generation error:", error);
     return NextResponse.json(
-      {
-        error: error instanceof Error ? error.message : "Failed to generate code",
-      },
-      { status: 500 },
-    )
+      { error: error instanceof Error ? error.message : "Failed to generate code" },
+      { status: 500 }
+    );
   }
 }

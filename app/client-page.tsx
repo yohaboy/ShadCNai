@@ -130,7 +130,7 @@ export default function ClientPage() {
 
       <div className="flex flex-1 overflow-hidden">
         <Sidebar>
-          <FileExplorer structure={fileStructure} onSelectFile={handleOpenFile} selectedFile={selectedFile} onCreateFile={()=>handleGenerateFile("new","new code")} />
+          <FileExplorer structure={fileStructure} onSelectFile={handleOpenFile} selectedFile={selectedFile} onCreateFile={()=>handleGenerateFile} />
         </Sidebar>
 
         <div className="flex-1 flex flex-col">
