@@ -40,7 +40,15 @@ export function FileExplorer({
     }
   }
 
-  const entries = Object.entries(structure)
+  const entries = Object.entries(structure).sort(([aName, aContent], [bName, bContent]) => {
+    const aIsFolder = typeof aContent === "object" && aContent !== null
+    const bIsFolder = typeof bContent === "object" && bContent !== null
+
+    if (aIsFolder && !bIsFolder) return -1
+    if (!aIsFolder && bIsFolder) return 1
+
+    return aName.localeCompare(bName)
+  })
 
   return (
     <div className="space-y-0.5">
