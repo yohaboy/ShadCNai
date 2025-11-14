@@ -1,22 +1,24 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Zap, Send, AlertCircle, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { useAIGeneration } from "@/hooks/use-ai-generation"
 
 interface AIPanelProps {
-  onGenerateFile: (filename: string, code: string) => void
+  onGenerateFile: (file:FileNode) => void
   projectContext?: string
   isOpen?: boolean
 }
 
+interface FileNode {
+  [key: string]: string | FileNode
+}
+
 export function AIPanel({ onGenerateFile, projectContext, isOpen = true }: AIPanelProps) {
   const [prompt, setPrompt] = useState("")
-  const [generatedCode, setGeneratedCode] = useState("")
-  const [generatedFiles, setGeneratedFiles] = useState<Record<string, string>>({})
-  const [filename, setFilename] = useState("")
+  const [generatedFiles, setGeneratedFiles] = useState<FileNode>({})
   const { generateCode, loading, error } = useAIGeneration()
 
   const handleGenerate = async () => {
@@ -25,32 +27,16 @@ export function AIPanel({ onGenerateFile, projectContext, isOpen = true }: AIPan
     try {
       const files = await generateCode(prompt, projectContext)
       setGeneratedFiles(files)
+      onGenerateFile(files);
       setPrompt("")
     } catch (err) {
       console.error("Generation failed:", err)
     }
   }
 
-  const saveFilesRecursively = (basePath: string, files: Record<string, any>) => {
-    Object.entries(files).forEach(([name, content]) => {
-      const fullPath = basePath ? `${basePath}/${name}` : name
-
-      if (typeof content === "string") {
-        // It's a file
-        onGenerateFile(fullPath, content)
-      } else if (typeof content === "object") {
-        // It's a folder, recurse
-        saveFilesRecursively(fullPath, content)
-      }
-    })
-  }
-
-
   const handleSaveAll = () => {
-    saveFilesRecursively("", generatedFiles)
-    setGeneratedFiles({})
-  }
 
+  }
 
   return (
     <div className="w-96 bg-[#252526] border-l border-[#3e3e42] flex flex-col">

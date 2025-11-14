@@ -25,6 +25,28 @@ export default function ClientPage() {
   const [fileStructure, setFileStructure] = useState<FileNode>({
   })
 
+
+  const nestFiles = (flatFiles: FileNode)=> {
+    const nested: FileNode = {}
+    for (const path in flatFiles) {
+      const parts = path.split("/")
+      let current = nested
+
+      for (let i = 0; i < parts.length; i++) {
+        const part = parts[i]
+
+        if (i === parts.length - 1) {
+          current[part] = flatFiles[path]
+        } else {
+          if (!current[part]) current[part] = {}
+          current = current[part] as FileNode
+        }
+      }
+    }
+
+    return nested
+  }
+
   const getFileContent = (path: string): string => {
     const parts = path.split("/")
     let current: any = fileStructure
@@ -79,28 +101,13 @@ export default function ClientPage() {
     setSelectedFile(id)
   }
 
-  const handleGenerateFile = (filename: string, code: string) => {
-    const parts = filename.split("/")
-    const newStructure = JSON.parse(JSON.stringify(fileStructure))
-    let current = newStructure
-
-    for (let i = 0; i < parts.length - 1; i++) {
-      if (!current[parts[i]]) {
-        current[parts[i]] = {}
-      }
-      current = current[parts[i]]
-    }
-
-    current[parts[parts.length - 1]] = code
-    setFileStructure(newStructure)
-
-    const newGenerated = new Set(generatedFiles)
-    newGenerated.add(filename)
-    setGeneratedFiles(newGenerated)
-
-    handleOpenFile(filename)
-    setSelectedFile(filename)
+  const handleGenerateFile = (flatFiles: FileNode) => {
+    const nested = nestFiles(flatFiles)
+    setFileStructure(nested)
+    const firstFile = Object.keys(flatFiles)[0]
+    setSelectedFile(firstFile || null)
   }
+
 
   return (
     <div className="flex flex-col h-screen bg-[#1e1e1e] text-white">
