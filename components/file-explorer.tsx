@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { ChevronRight, ChevronDown, Folder, FileText, Plus } from "lucide-react"
+import {Reactjs ,FolderApp, TypeScript, Node, Tailwind, Next, Js, Markdown, YummaCSS} from "@react-symbols/icons";
 
 interface FileExplorerProps {
   structure: any
@@ -71,7 +72,7 @@ export function FileExplorer({
                   ) : (
                     <ChevronRight size={16} className="flex-shrink-0 text-gray-500" />
                   )}
-                  <Folder size={16} className="flex-shrink-0 text-yellow-500" />
+                  <Folder size={20} fill="#FDBA12" className="flex-shrink-0 text-black/40" />
                   <span className="truncate">{name}</span>
                 </button>
 
@@ -94,7 +95,29 @@ export function FileExplorer({
                   isSelected ? "bg-[#0e639c] text-white" : "text-gray-300 hover:bg-[#3e3e42]"
                 }`}
               >
-                <FileText size={16} className="flex-shrink-0" />
+                {(() => {
+                  const ext = name.split(".").pop()?.toLowerCase();
+                  switch (ext) {
+                    case "tsx":
+                      return <Reactjs width={20} height={20} className="flex-shrink-0" />;
+                    case "ts":
+                      return <TypeScript width={20} height={20} className="flex-shrink-0" />;
+                    case "css":
+                      return <Tailwind width={20} height={20} className="flex-shrink-0" />;
+                    case "mjs":
+                      return <Next width={20} height={20} className="flex-shrink-0" />;
+                    case "js":
+                      return <Js width={20} height={20} className="flex-shrink-0" />;
+                    case "css":
+                      return <YummaCSS width={20} height={20} className="flex-shrink-0" />;
+                    case "md":
+                      return <Markdown width={20} height={20} className="flex-shrink-0" />;
+                    case "json":
+                      return <Node width={20} height={20} className="flex-shrink-0" />;
+                    default:
+                      return <FileText width={20} className="flex-shrink-0 text-gray-500/80" />;
+                  }
+                })()}
                 <span className="truncate">{name}</span>
               </button>
             )}

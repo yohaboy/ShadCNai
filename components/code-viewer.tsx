@@ -32,7 +32,7 @@ export function CodeViewer({
   useEffect(() => {
     async function highlight() {
       const highlighter = await createHighlighter({
-        themes: ["vitesse-dark"],
+        themes: ["one-dark-pro"],
         langs: [language],
       })
 
@@ -41,7 +41,7 @@ export function CodeViewer({
         .map((line, idx) => {
           let highlightedLine = highlighter.codeToHtml(line || " ", {
             lang: language,
-            theme: "vitesse-dark",
+            theme: "one-dark-pro",
           })
 
           highlightedLine = highlightedLine
