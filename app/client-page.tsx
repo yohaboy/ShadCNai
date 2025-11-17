@@ -8,6 +8,7 @@ import { FileExplorer } from "@/components/file-explorer"
 import { AIPanel } from "@/components/ai-panel"
 import { WorkspaceHeader } from "@/components/workspace-header"
 import { StatusBar } from "@/components/status-bar"
+import { exportAsZip } from "@/hooks/export-zip"
 
 interface FileNode {
   [key: string]: string | FileNode
@@ -115,7 +116,7 @@ export default function ClientPage() {
         projectName="Project1"
         onToggleAI={() => setShowAIPanel(!showAIPanel)}
         aiEnabled={showAIPanel}
-        onExport={() => alert("Export feature coming soon!")}
+        onExport={() => exportAsZip(fileStructure)}
         onNewProject={()=>alert("New Project feature coming soon!")}
       />
 
