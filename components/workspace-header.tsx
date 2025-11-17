@@ -22,8 +22,7 @@ export function WorkspaceHeader({
     <header className="bg-[#252526] border-b border-[#3e3e42] px-6 py-4 flex items-center justify-between">
       <div className="flex items-center gap-4">
         <div>
-          <h1 className="text-lg font-semibold text-white">{projectName}</h1>
-          <p className="text-xs text-gray-500">Next.js Project</p>
+          <a href="/" className="text-xl font-extrabold text-blue-500/80">{projectName}</a>
         </div>
       </div>
 
