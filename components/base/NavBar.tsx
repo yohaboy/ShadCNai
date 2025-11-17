@@ -18,11 +18,11 @@ export default function Navigation() {
           <Link href="/pricing" className="text-sm text-muted-foreground hover:text-foreground transition">
             Pricing
           </Link>
-          <Link href="#" className="text-sm text-muted-foreground hover:text-foreground transition">
-            Docs
-          </Link>
-          <Link href="#" className="text-sm text-muted-foreground hover:text-foreground transition">
+          <Link href="/about" className="text-sm text-muted-foreground hover:text-foreground transition">
             About
+          </Link>
+          <Link href="contact" className="text-sm text-muted-foreground hover:text-foreground transition">
+            Contact Us
           </Link>
         </div>
 

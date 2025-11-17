@@ -19,11 +19,6 @@ export default function LoginForm() {
     <div className="flex-1 flex items-center justify-center px-4 sm:px-6 lg:px-8 py-12">
       <div className="w-full max-w-md space-y-8">
         <div className="text-center space-y-2">
-          <div className="flex justify-center mb-4">
-            <div className="w-12 h-12 bg-primary rounded-lg flex items-center justify-center text-primary-foreground font-bold text-xl">
-              BF
-            </div>
-          </div>
           <h1 className="text-3xl font-bold">Welcome back</h1>
           <p className="text-muted-foreground">Sign in to your account to continue</p>
         </div>

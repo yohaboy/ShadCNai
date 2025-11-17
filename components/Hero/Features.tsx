@@ -12,7 +12,7 @@ export default function Features() {
       title: "Not Your Average Purple AI UI",
       description:
         "No glowing gradients, no galaxy-brain marketing fluff. Just an AI that actually writes code instead of trying to hypnotize you with neon blobs.",
-      icon: "🤡",
+      icon: "🛠️",
     },
     {
       title: "Fairprice",

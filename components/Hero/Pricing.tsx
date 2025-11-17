@@ -6,57 +6,24 @@ import Link from 'next/link'
 
 export default function PricingSection() {
   const plans = [
-    {
-      name: 'Starter',
-      description: 'Perfect for individuals and small projects',
-      price: '29',
-      features: [
-        'Up to 3 projects',
-        '5GB storage',
-        'Basic AI suggestions',
-        'Community support',
-        'Core features',
-      ],
-      popular: false,
-    },
-    {
-      name: 'Professional',
-      description: 'For growing teams and serious builders',
-      price: '79',
-      features: [
-        'Unlimited projects',
-        '100GB storage',
-        'Advanced AI features',
-        'Priority support',
-        'Team collaboration',
-        'Custom domains',
-        'Analytics dashboard',
-      ],
-      popular: true,
-    },
-    {
-      name: 'Enterprise',
-      description: 'For large organizations with custom needs',
-      price: 'Custom',
-      features: [
-        'Everything in Professional',
-        'Unlimited storage',
-        'Dedicated support',
-        'SSO & advanced security',
-        'Custom integrations',
-        'SLA guarantee',
-        'Audit logs',
-      ],
-      popular: false,
-    },
+    { name: 'Starter', tokens: '100 tokens', price:"10$" ,popular: false },
+    { name: 'Professional', tokens: '500 tokens', price:"40$" ,popular: true },
+    { name: 'Enterprise', tokens: '1000 tokens', price:"70$" ,popular: false },
+  ]
+
+  const features = [
+    'Unlimited AI-assisted projects',
+    'AI suggestions (token-based)',
+    'Core BuilderFlow features',
+    'Priority support',
   ]
 
   return (
     <section className="py-20 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto space-y-16">
         <div className="text-center space-y-4">
-          <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">Simple, transparent pricing</h2>
-          <p className="text-lg text-muted-foreground">Choose the perfect plan for your needs. Always flexible to scale.</p>
+          <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">Simple token-based pricing</h2>
+          <p className="text-lg text-muted-foreground">Buy tokens and spend them as you need. One plan, same features, just more tokens.</p>
         </div>
 
         <div className="grid md:grid-cols-3 gap-8 lg:gap-6">
@@ -79,20 +46,14 @@ export default function PricingSection() {
 
               <div className="mb-8">
                 <h3 className="text-xl font-bold mb-2">{plan.name}</h3>
-                <p className="text-sm text-muted-foreground mb-6">{plan.description}</p>
-                <div className="flex items-baseline gap-1">
-                  {plan.price !== 'Custom' ? (
-                    <>
-                      <span className="text-4xl font-bold">${plan.price}</span>
-                      <span className="text-muted-foreground">/month</span>
-                    </>
-                  ) : (
-                    <span className="text-4xl font-bold">Contact us</span>
-                  )}
+                <p className="text-sm text-muted-foreground mb-6">{}</p>
+                <div className="flex flex-col items-center justify-center gap-1">
+                    <span className="text-4xl font-bold">${plan.price}</span>
+                    <span className="text-muted-foreground">{plan.tokens}</span>
                 </div>
               </div>
 
-              <Link href="/register" className="mb-8 w-full">
+              <Link href="/auth/register" className="mb-8 w-full">
                 <Button
                   className="w-full"
                   variant={plan.popular ? 'default' : 'outline'}
@@ -102,7 +63,7 @@ export default function PricingSection() {
               </Link>
 
               <div className="space-y-4 flex-1">
-                {plan.features.map((feature, featureIndex) => (
+                {features.map((feature, featureIndex) => (
                   <div key={featureIndex} className="flex items-start gap-3">
                     <Check className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
                     <span className="text-sm text-muted-foreground">{feature}</span>
