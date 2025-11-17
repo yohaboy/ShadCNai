@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Sidebar } from "@/components/sidebar"
 import { CodeViewer } from "@/components/code-viewer"
 import { EditorTabs } from "@/components/editor-tabs"
@@ -25,6 +25,42 @@ export default function ClientPage() {
 
   const [fileStructure, setFileStructure] = useState<FileNode>({
   })
+
+  const flatten = (node: FileNode, prefix = ""): Record<string, string> => {
+    const out: Record<string, string> = {}
+    for (const key in node) {
+      const value = node[key]
+      const full = prefix ? `${prefix}/${key}` : key
+      if (typeof value === "string") {
+        out[full] = value
+      } else {
+        Object.assign(out, flatten(value, full))
+      }
+    }
+    return out
+  }
+
+
+  useEffect(() => {
+    const saved = localStorage.getItem("projectFiles")
+    if (saved) {
+      const structure = JSON.parse(saved)
+      setFileStructure(structure)
+
+      const flat = flatten(structure)
+      const filePaths = Object.keys(flat)
+      if (filePaths.length > 0) {
+        setSelectedFile(filePaths[0])
+      }
+    }
+  }, [])
+
+
+  useEffect(() => {
+    if (Object.keys(fileStructure).length > 0) {
+      localStorage.setItem("projectFiles", JSON.stringify(fileStructure))
+    }
+  }, [fileStructure])
 
 
   const nestFiles = (flatFiles: FileNode)=> {
@@ -79,6 +115,7 @@ export default function ClientPage() {
 
     newCurrent[parts[parts.length - 1]] = content
     setFileStructure(newStructure)
+    localStorage.setItem("projectFiles", JSON.stringify(newStructure))
   }
 
   const handleOpenFile = (path: string) => {
