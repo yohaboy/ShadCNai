@@ -150,7 +150,7 @@ export default function ClientPage() {
   return (
     <div className="flex flex-col h-screen bg-[#1e1e1e] text-white">
       <WorkspaceHeader
-        projectName="BUILDERFLOW"
+        projectName="Project"
         onToggleAI={() => setShowAIPanel(!showAIPanel)}
         aiEnabled={showAIPanel}
         onExport={() => exportAsZip(fileStructure)}
