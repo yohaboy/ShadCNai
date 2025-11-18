@@ -1,13 +1,13 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Sidebar } from "@/components/sidebar"
-import { CodeViewer } from "@/components/code-viewer"
-import { EditorTabs } from "@/components/editor-tabs"
-import { FileExplorer } from "@/components/file-explorer"
-import { AIPanel } from "@/components/ai-panel"
-import { WorkspaceHeader } from "@/components/workspace-header"
-import { StatusBar } from "@/components/status-bar"
+import { Sidebar } from "@/components/ai/sidebar"
+import { CodeViewer } from "@/components/ai/code-viewer"
+import { EditorTabs } from "@/components/ai/editor-tabs"
+import { FileExplorer } from "@/components/ai/file-explorer"
+import { AIPanel } from "@/components/ai/ai-panel"
+import { WorkspaceHeader } from "@/components/ai/workspace-header"
+import { StatusBar } from "@/components/ai/status-bar"
 import { exportAsZip } from "@/hooks/export-zip"
 
 interface FileNode {
