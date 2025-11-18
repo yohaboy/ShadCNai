@@ -1,11 +1,12 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { createHighlighter } from "shiki"
+import { Highlight ,Language } from "prism-react-renderer"
+import { themes } from "prism-react-renderer"
 
 interface CodeViewerProps {
   content: string
-  language?: string
+  language?: Language
   onContentChange?: (content: string) => void
   editable?: boolean
 }
@@ -18,7 +19,6 @@ export function CodeViewer({
 }: CodeViewerProps) {
   const [displayContent, setDisplayContent] = useState(content)
   const [isEditing, setIsEditing] = useState(false)
-  const [highlightedHTML, setHighlightedHTML] = useState("")
 
   useEffect(() => {
     setDisplayContent(content)
@@ -29,37 +29,7 @@ export function CodeViewer({
     onContentChange?.(newContent)
   }
 
-  useEffect(() => {
-    async function highlight() {
-      const highlighter = await createHighlighter({
-        themes: ["one-dark-pro"],
-        langs: [language],
-      })
-
-      const lines = displayContent.split("\n")
-      const html = lines
-        .map((line, idx) => {
-          let highlightedLine = highlighter.codeToHtml(line || " ", {
-            lang: language,
-            theme: "one-dark-pro",
-          })
-
-          highlightedLine = highlightedLine
-            .replace(/background:[^;"]+;?/g, "")
-            .replace(/<pre[^>]*>/, '<pre class="bg-transparent">')
-
-          return `<div class="flex">
-                    <span class="text-gray-500 select-none w-10 text-right pr-2">${idx + 1}</span>
-                    <div class="flex-1">${highlightedLine}</div>
-                  </div>`
-        })
-        .join("")
-
-      setHighlightedHTML(html)
-    }
-
-    if (!isEditing) highlight()
-  }, [displayContent, language, isEditing])
+  const HighlightAny = Highlight as any
 
   return (
     <div className="flex-1 flex flex-col overflow-auto">
@@ -83,13 +53,39 @@ export function CodeViewer({
           value={displayContent}
           onChange={(e) => handleChange(e.target.value)}
           className="flex-1 p-6 font-mono text-sm text-gray-300 bg-[#1e1e1e] border-none outline-none resize-none"
-          spellCheck="false"
+          spellCheck={false}
         />
       ) : (
-        <div
-          className="flex-1 bg-[#1e1e1e] text-gray-300 p-6 font-mono text-sm leading-relaxed overflow-auto"
-          dangerouslySetInnerHTML={{ __html: highlightedHTML }}
-        />
+          <div className="flex-1 bg-[#1e1e1e] text-gray-300 p-6 font-mono text-sm leading-relaxed">
+            <HighlightAny code={displayContent} language={language} theme={themes.vsDark}>
+              {({ className, style, tokens, getLineProps, getTokenProps }: any) => (
+                <div
+                  className={`flex overflow-auto ${className}`}
+                  style={{ ...style, background: "transparent", padding: 0, whiteSpace: "pre" }}
+                >
+                  {/* numbers column */}
+                  <div className="flex flex-col select-none text-gray-500 pr-2">
+                    {tokens.map((line: any[], i: number) => (
+                      <div key={i} className="w-10 text-right">
+                        {i + 1}
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Code column */}
+                  <div className="flex-1 min-w-0">
+                    {tokens.map((line: any[], i: number) => (
+                      <div key={i} {...getLineProps({ line, key: i })}>
+                        {line.map((token: any, key: number) => (
+                          <span key={key} {...getTokenProps({ token, key })} />
+                        ))}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </HighlightAny>
+          </div>
       )}
     </div>
   )

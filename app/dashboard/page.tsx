@@ -49,7 +49,9 @@ export default function ClientPage() {
 
       const flat = flatten(structure)
       const filePaths = Object.keys(flat)
-      if (filePaths.length > 0) {
+      if (flat["app/page.tsx"]) {
+        setSelectedFile("app/page.tsx")
+      } else if (filePaths.length > 0) {
         setSelectedFile(filePaths[0])
       }
     }
@@ -150,7 +152,7 @@ export default function ClientPage() {
   return (
     <div className="flex flex-col h-screen bg-[#1e1e1e] text-white">
       <WorkspaceHeader
-        projectName="Project"
+        projectName="VibeCN"
         onToggleAI={() => setShowAIPanel(!showAIPanel)}
         aiEnabled={showAIPanel}
         onExport={() => exportAsZip(fileStructure)}
@@ -162,7 +164,7 @@ export default function ClientPage() {
           <FileExplorer structure={fileStructure} onSelectFile={handleOpenFile} selectedFile={selectedFile}/>
         </Sidebar>
 
-        <div className="flex-1 flex flex-col">
+        <div className="flex-1 flex flex-col min-w-0">
           <EditorTabs
             tabs={openTabs}
             activeTab={selectedFile || ""}
@@ -171,7 +173,7 @@ export default function ClientPage() {
             unsavedTabs={unsavedTabs}
           />
 
-          <div className="flex-1 flex overflow-hidden">
+          <div className="flex-1 flex overflow-y-hidden overflow-x-auto">
             <CodeViewer
               content={getFileContent(selectedFile || "")}
               onContentChange={handleContentChange}

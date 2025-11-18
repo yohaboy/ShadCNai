@@ -1,9 +1,10 @@
 "use client"
 
-import { Download, Plus, MoreVertical, Zap, User, Settings, LogOut } from "lucide-react"
+import { Download, Plus, MoreVertical, Zap, User, Settings, LogOut, ArrowLeft } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "../ui/dropdown-menu"
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar"
+import { FaArrowLeft } from "react-icons/fa"
 
 interface WorkspaceHeaderProps {
   projectName?: string
@@ -21,11 +22,14 @@ export function WorkspaceHeader({
   aiEnabled = true,
 }: WorkspaceHeaderProps) {
   return (
-    <header className="bg-[#252526] border-b border-[#3e3e42] px-10 py-4 flex items-center justify-between">
+    <header className="bg-[#252526] border-b border-[#3e3e42] px-8 py-4 flex items-center justify-between">
       <div className="flex items-center gap-4">
-        <div>
-          <a href="/" className="text-xl font-extrabold text-blue-500/80">{projectName}</a>
-        </div>
+          <a href="/">
+            <Button variant="outline" className="flex items-center gap-2 bg-[#3e3e42] text-gray-300 hover:bg-[#3e3e42]/80">
+              <FaArrowLeft size={14} />
+              Back
+          </Button>
+          </a>
       </div>
 
       <div className="flex items-center gap-2">
