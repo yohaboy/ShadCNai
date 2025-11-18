@@ -50,41 +50,43 @@ const projects: Project[] = [
 
 export default function Projects() {
   return (
-    <div className="space-y-6">
-      {/* Header with Create Button */}
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold">Projects</h1>
-          <p className="text-muted-foreground mt-1">Manage and track your active projects</p>
-        </div>
-        <Button>
-          <Plus className="w-4 h-4 mr-2" />
-          New Project
-        </Button>
-      </div>
-
-      {/* Projects Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {projects.map((project) => (
-          <ProjectCard key={project.id} project={project} />
-        ))}
-      </div>
-
-      {/* Empty State for New Projects */}
-      {projects.length === 0 && (
-        <Card className="border-dashed">
-          <CardContent className="pt-12 pb-12 text-center">
-            <Archive className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
-            <h3 className="text-lg font-semibold mb-2">No projects yet</h3>
-            <p className="text-muted-foreground mb-4">Create your first project to get started</p>
+      <div className='flex justify-center w-full px-4 py-6'>
+        <div className="w-full max-w-7xl space-y-6">
+          {/* Header with Create Button */}
+          <div className="flex justify-between items-center">
+            <div>
+              <h1 className="text-3xl font-bold">Projects</h1>
+              <p className="text-muted-foreground mt-1">Manage and track your active projects</p>
+            </div>
             <Button>
               <Plus className="w-4 h-4 mr-2" />
-              Create Project
+              New Project
             </Button>
-          </CardContent>
-        </Card>
-      )}
-    </div>
+          </div>
+
+          {/* Projects Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {projects.map((project) => (
+              <ProjectCard key={project.id} project={project} />
+            ))}
+          </div>
+
+          {/* Empty State for New Projects */}
+          {projects.length === 0 && (
+            <Card className="border-dashed">
+              <CardContent className="pt-12 pb-12 text-center">
+                <Archive className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
+                <h3 className="text-lg font-semibold mb-2">No projects yet</h3>
+                <p className="text-muted-foreground mb-4">Create your first project to get started</p>
+                <Button>
+                  <Plus className="w-4 h-4 mr-2" />
+                  Create Project
+                </Button>
+              </CardContent>
+            </Card>
+          )}
+        </div>
+      </div>
   );
 }
 

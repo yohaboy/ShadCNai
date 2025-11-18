@@ -6,7 +6,8 @@ import { Button } from '@/components/ui/button';
 
 export default function Overview() {
   return (
-    <div className="space-y-8">
+     <div className='flex justify-center w-full px-4 py-6'>
+           <div className="w-full max-w-7xl space-y-6">
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard
@@ -93,22 +94,13 @@ export default function Overview() {
         </Card>
       </div>
     </div>
+     </div>
   );
 }
 
-function StatCard({
-  title,
-  value,
-  description,
-  icon,
-  trend,
-}: {
-  title: string;
-  value: string;
-  description: string;
-  icon: React.ReactNode;
-  trend: 'up' | 'down';
-}) {
+export function StatCard({title,value,description,icon,trend,}: 
+  {title: string;value: string;description: string;icon: React.ReactNode;trend: 'up' | 'down';}) 
+  {
   return (
     <Card className="hover:shadow-lg transition-shadow">
       <CardContent className="pt-6">
@@ -120,7 +112,7 @@ function StatCard({
               {description}
             </p>
           </div>
-          <div className="p-3 bg-accent rounded-lg text-primary">{icon}</div>
+          <div className="p-3 bg-white/80 rounded-lg text-primary">{icon}</div>
         </div>
       </CardContent>
     </Card>
