@@ -1,12 +1,17 @@
 import Navigation from "@/components/base/NavBar";
 import Footer from "@/components/Hero/Footer";
 import AboutUs from "@/components/others/About";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 
 
-export default function About() {
+export default async function About() {
+    const session = await auth.api.getSession({
+        headers:await headers(),
+    })
     return (
         <>
-          <Navigation/>
+          <Navigation session={session}/>
           <AboutUs/>
           <Footer/>
         </>
