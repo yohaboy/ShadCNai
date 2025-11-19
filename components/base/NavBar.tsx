@@ -5,7 +5,9 @@ import { Button } from '@/components/ui/button'
 import { auth } from '@/lib/auth';
 import { signOut } from '@/lib/auth-client';
 import { useRouter } from 'next/navigation';
-import { LogOut } from 'lucide-react';
+import { LogOut, Settings, User } from 'lucide-react';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '../ui/dropdown-menu';
+import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 
 type Session = typeof auth.$Infer.Session;
 
@@ -41,15 +43,35 @@ export default function Navigation({ session }:{session:Session | null}) {
         <div className="flex items-center gap-3">
           {session?.user ? (
             <>
-              <span className="text-sm">Hi, {session.user.name}</span>
+              <span className="text-sm font-semibold">Hi, {session.user.name}</span>
 
-              <Button
-                onClick={handleSignout}
-                className="flex items-center gap-2 text-sm  bg-accent hover:text-accent-foreground"
-              >
-                <LogOut className="w-4 h-4" />
-                Logout
-              </Button>
+              <DropdownMenu>
+                <DropdownMenuTrigger>
+                    <Avatar>
+                      <AvatarImage src="https://github.com/shadcn.png" />
+                      <AvatarFallback></AvatarFallback>
+                    </Avatar>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent sideOffset={10} className="w-48 rounded-xl shadow-lg">
+                  <DropdownMenuLabel className="font-semibold text-sm">My Account</DropdownMenuLabel>
+                  
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={()=>router.push('/profile')} className="flex items-center gap-2">
+                      <User className="h-4 w-4" />
+                      Profile
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={()=>router.push('/profile')} className="flex items-center gap-2">
+                      <Settings className="h-4 w-4" />
+                      Settings
+                    </DropdownMenuItem>
+
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={handleSignout} className="flex items-center gap-2 text-red-600 focus:text-red-700">
+                      <LogOut className="h-4 w-4" />
+                      Logout
+                    </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </>
           ) : (
             <>
