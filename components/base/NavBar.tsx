@@ -30,8 +30,8 @@ export default function Navigation({ session }:{session:Session | null}) {
           <Link href="/pricing" className="text-sm text-muted-foreground hover:text-foreground transition">
             Pricing
           </Link>
-          <Link href="/about" className="text-sm text-muted-foreground hover:text-foreground transition">
-            About
+          <Link href="/dashboard" className="text-sm text-muted-foreground hover:text-foreground transition">
+            Code
           </Link>
           <Link href="contact" className="text-sm text-muted-foreground hover:text-foreground transition">
             Contact Us

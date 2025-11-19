@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "../ui/dropdown-menu"
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar"
 import { FaArrowLeft } from "react-icons/fa"
+import { useRouter } from "next/navigation"
+import { signOut } from "@/lib/auth-client"
 
 interface WorkspaceHeaderProps {
   projectName?: string
@@ -21,6 +23,14 @@ export function WorkspaceHeader({
   onToggleAI,
   aiEnabled = true,
 }: WorkspaceHeaderProps) {
+
+  const router = useRouter();
+
+  const  handleSignout = async () => {
+      await signOut()
+      router.push("/auth/login")
+  }
+
   return (
     <header className="bg-[#252526] border-b border-[#3e3e42] px-8 py-4 flex items-center justify-between">
       <div className="flex items-center gap-4">
@@ -79,17 +89,17 @@ export function WorkspaceHeader({
               <DropdownMenuLabel className="font-semibold text-sm">My Account</DropdownMenuLabel>
               
                 <DropdownMenuSeparator />
-                <DropdownMenuItem className="flex items-center gap-2">
+                <DropdownMenuItem onClick={()=>router.push('/profile')} className="flex items-center gap-2">
                   <User className="h-4 w-4" />
                   Profile
                 </DropdownMenuItem>
-                <DropdownMenuItem className="flex items-center gap-2">
+                <DropdownMenuItem onClick={()=>router.push('/profile')} className="flex items-center gap-2">
                   <Settings className="h-4 w-4" />
                   Settings
                 </DropdownMenuItem>
 
                 <DropdownMenuSeparator />
-                <DropdownMenuItem className="flex items-center gap-2 text-red-600 focus:text-red-700">
+                <DropdownMenuItem onClick={handleSignout} className="flex items-center gap-2 text-red-600 focus:text-red-700">
                   <LogOut className="h-4 w-4" />
                   Logout
                 </DropdownMenuItem>

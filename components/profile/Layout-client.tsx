@@ -13,7 +13,7 @@ import { auth } from '@/lib/auth';
 export type PageType = 'overview' | 'profile' | 'projects' | 'billing' | 'settings';
 type Session = typeof auth.$Infer.Session;
 
-export default async function Layout({ session }:{session:Session | null}) {
+export default function Layout({ session }:{session:Session | null}) {
   const [currentPage, setCurrentPage] = useState<PageType>('overview');
   const renderPage = () => {
     switch (currentPage) {
