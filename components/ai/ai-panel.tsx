@@ -89,7 +89,7 @@ export function AIPanel({ onGenerateFile, projectContext, isOpen = true }: AIPan
               onClick={handleSaveAll}
               className="w-full bg-green-600 hover:bg-green-700 text-sm"
             >
-              Save All Files
+              Succesfull
             </Button>
           </div>
         )}
