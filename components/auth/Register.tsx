@@ -6,8 +6,13 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Checkbox } from '@/components/ui/checkbox'
+import { signUp } from '@/lib/auth-client'
+import { useRouter } from 'next/navigation'
+
 
 export default function RegisterForm() {
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -24,10 +29,40 @@ export default function RegisterForm() {
     }))
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    console.log('Registration attempt:', formData)
-  }
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (formData.password !== formData.confirmPassword) {
+      alert("Passwords do not match");
+      return;
+    }
+    if(formData.agreeToTerms === false){
+      alert("You must agree to the terms and conditions to continue.");
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const result = await signUp.email({
+        name: formData.name,       
+        email: formData.email,
+        password: formData.password,
+      });
+
+      if (result.data?.user) {
+        router.push("/dashboard");
+      }
+
+    } catch (err: any) {
+      console.error("Signup failed:", err.message || err);
+      alert(err.message || "Signup failed");
+    } finally {
+      setLoading(false);
+    }
+    
+  };
+
+
 
   return (
     <div className="flex-1 flex items-center justify-center px-4 sm:px-6 lg:px-8 py-12">
@@ -115,8 +150,8 @@ export default function RegisterForm() {
             </label>
           </div>
 
-          <Button type="submit" className="w-full">
-            Create account
+          <Button type="submit" className="w-full" disabled={loading}>
+            {loading ? "Loading..." : "Create account"}
           </Button>
         </form>
 

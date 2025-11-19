@@ -5,15 +5,36 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { signIn } from '@/lib/auth-client'
+import { useRouter } from 'next/navigation'
 
 export default function LoginForm() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    console.log('Login attempt:', { email, password })
-  }
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      setLoading(true);
+      const result = await signIn.email({     
+        email: email,
+        password: password,
+      });
+
+      if (result.data?.user) {
+        return router.push("/dashboard");
+      }
+      alert("Invalid email or password");
+    } catch (err: any) {
+      alert(err.message || "Signup failed");
+    } finally {
+      setLoading(false);
+    }
+    
+  };
 
   return (
     <div className="flex-1 flex items-center justify-center px-4 sm:px-6 lg:px-8 py-12">
@@ -55,8 +76,8 @@ export default function LoginForm() {
             />
           </div>
 
-          <Button type="submit" className="w-full">
-            Sign in
+          <Button type="submit" className="w-full" disabled={loading}>
+            {loading ? "Loading..." : "Sign in"}
           </Button>
         </form>
 
