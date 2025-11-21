@@ -1,58 +1,50 @@
 'use client';
 
-import { Plus, Archive, MoreHorizontal } from 'lucide-react';
+import { Plus, Archive, MoreHorizontal, Trash } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { useEffect, useState } from 'react';
+import { getUserProjects } from '@/lib/actions/project';
+import { auth } from '@/lib/auth';
 
 interface Project {
   id: string;
   name: string;
-  description: string;
-  status: 'Active' | 'On Hold' | 'Completed';
-  members: number;
-  progress: number;
+  description: string | null;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
-const projects: Project[] = [
-  {
-    id: '1',
-    name: 'Dashboard Redesign',
-    description: 'Complete redesign of the main dashboard interface',
-    status: 'Active',
-    members: 5,
-    progress: 65,
-  },
-  {
-    id: '2',
-    name: 'Mobile App Launch',
-    description: 'Native mobile applications for iOS and Android',
-    status: 'Active',
-    members: 8,
-    progress: 45,
-  },
-  {
-    id: '3',
-    name: 'API Integration',
-    description: 'Third-party API integrations and webhooks',
-    status: 'Completed',
-    members: 3,
-    progress: 100,
-  },
-  {
-    id: '4',
-    name: 'Performance Optimization',
-    description: 'Database and frontend performance improvements',
-    status: 'On Hold',
-    members: 2,
-    progress: 30,
-  },
-];
+type Session = typeof auth.$Infer.Session;
 
-export default function Projects() {
+export default function Projects({ session }:{session:Session | null}) {
+  const [projectList, setProjectList] = useState<Project[]>([]);
+
+  useEffect(() => {
+    let mounted = true;
+
+    async function fetchProjects() {
+      try {
+        const result = await getUserProjects(session?.user.id || "");
+        if (mounted && result) {
+          setProjectList(result);
+        }
+      } catch (error) {
+        console.error('Failed to load projects', error);
+      }
+    }
+
+    fetchProjects();
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+
   return (
       <div className='flex justify-center w-full px-4 py-6'>
         <div className="w-full max-w-7xl space-y-6">
-          {/* Header with Create Button */}
           <div className="flex justify-between items-center">
             <div>
               <h1 className="text-3xl font-bold">Projects</h1>
@@ -66,13 +58,12 @@ export default function Projects() {
 
           {/* Projects Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {projects.map((project) => (
+            {projectList.map((project) => (
               <ProjectCard key={project.id} project={project} />
             ))}
           </div>
 
-          {/* Empty State for New Projects */}
-          {projects.length === 0 && (
+          {projectList.length === 0 && (
             <Card className="border-dashed">
               <CardContent className="pt-12 pb-12 text-center">
                 <Archive className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
@@ -106,29 +97,11 @@ function ProjectCard({ project }: { project: Project }) {
             <CardDescription className="mt-2">{project.description}</CardDescription>
           </div>
           <Button variant="ghost" size="icon">
-            <MoreHorizontal className="w-4 h-4" />
+            <Trash className="w-4 h-4" />
           </Button>
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="flex justify-between items-center">
-          <span className={`text-xs px-3 py-1 rounded-full font-medium ${statusColor[project.status]}`}>
-            {project.status}
-          </span>
-          <span className="text-sm text-muted-foreground">{project.members} members</span>
-        </div>
-        <div className="space-y-2">
-          <div className="flex justify-between items-center">
-            <span className="text-xs text-muted-foreground">Progress</span>
-            <span className="text-sm font-medium">{project.progress}%</span>
-          </div>
-          <div className="w-full bg-border rounded-full h-2 overflow-hidden">
-            <div
-              className="bg-primary h-full transition-all"
-              style={{ width: `${project.progress}%` }}
-            />
-          </div>
-        </div>
       </CardContent>
     </Card>
   );

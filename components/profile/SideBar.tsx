@@ -1,7 +1,7 @@
 'use client';
 
 import { LayoutDashboard, User, FolderOpen, CreditCard, Settings, LogOut } from 'lucide-react';
-import { PageType } from './Layout';
+import { PageType } from './Layout-client';
 import { Button } from '@/components/ui/button';
 
 interface SidebarProps {
