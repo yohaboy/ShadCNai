@@ -1,3 +1,5 @@
+"use server"
+
 import { zipToFileNode } from "@/hooks/extract";
 import  prisma from "../prisma"
 
