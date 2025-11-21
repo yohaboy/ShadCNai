@@ -19,7 +19,7 @@ export function FileExplorer({
   basePath = "",
   onCreateFile,
 }: FileExplorerProps) {
-  const [expanded, setExpanded] = useState<Set<string>>(new Set(["app", "components"]))
+  const [expanded, setExpanded] = useState<Set<string>>(new Set(["app"]))
   const [showCreateInput, setShowCreateInput] = useState(false)
   const [newFileName, setNewFileName] = useState("")
 
