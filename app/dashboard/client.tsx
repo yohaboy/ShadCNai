@@ -8,8 +8,9 @@ import { FileExplorer } from "@/components/ai/file-explorer"
 import { AIPanel } from "@/components/ai/ai-panel"
 import { WorkspaceHeader } from "@/components/ai/workspace-header"
 import { StatusBar } from "@/components/ai/status-bar"
-import { exportAsZip } from "@/hooks/export-zip"
+import { exportAsZip, fileNodeToZipBuffer } from "@/hooks/export-zip"
 import { auth } from "@/lib/auth"
+import { createProject, getUserProjects } from "@/lib/actions/project"
 
 interface FileNode {
   [key: string]: string | FileNode
@@ -143,11 +144,21 @@ export default function DashboardPage({ session }:{session:Session | null}) {
     setSelectedFile(id)
   }
 
-  const handleGenerateFile = (flatFiles: FileNode) => {
+  const handleGenerateFile = async (flatFiles: FileNode) => {
+    if (!session?.user.id) {
+      console.error("No user logged in.");
+      return;
+    }
     const nested = nestFiles(flatFiles)
     setFileStructure(nested)
     const firstFile = Object.keys(flatFiles)[0]
     setSelectedFile(firstFile || null)
+
+    const userProjects = await getUserProjects(session?.user.id);
+    const generatedName = `Project #${userProjects.length + 1}`;
+
+    const zipBuffer = await fileNodeToZipBuffer(flatFiles);
+     await createProject(session?.user.id , generatedName, zipBuffer, "...");
   }
 
 
