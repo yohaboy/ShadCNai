@@ -4,7 +4,7 @@ interface FileNode {
   [key: string]: string | FileNode;
 }
 
-export async function zipToFileNode(file: Blob | ArrayBuffer): Promise<FileNode> {
+export async function zipToFileNode(file: Blob | ArrayBuffer | Uint8Array | Buffer): Promise<FileNode> {
   const zip = await JSZip.loadAsync(file);
   const root: FileNode = {};
 

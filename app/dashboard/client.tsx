@@ -169,7 +169,7 @@ export default function DashboardPage({ session }:{session:Session | null}) {
         onToggleAI={() => setShowAIPanel(!showAIPanel)}
         aiEnabled={showAIPanel}
         onExport={() => exportAsZip(fileStructure)}
-        onNewProject={()=>alert("New Project feature coming soon!")}
+        onNewProject={()=>{localStorage.removeItem("projectFiles"); window.location.reload()}}
       />
 
       <div className="flex flex-1 overflow-hidden">

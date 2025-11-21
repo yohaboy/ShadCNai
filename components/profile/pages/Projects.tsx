@@ -4,7 +4,7 @@ import { Plus, Archive, MoreHorizontal, Trash } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useEffect, useState } from 'react';
-import { getUserProjects } from '@/lib/actions/project';
+import { deleteProject, getProject, getUserProjects } from '@/lib/actions/project';
 import { auth } from '@/lib/auth';
 
 interface Project {
@@ -41,7 +41,6 @@ export default function Projects({ session }:{session:Session | null}) {
     };
   }, []);
 
-
   return (
       <div className='flex justify-center w-full px-4 py-6'>
         <div className="w-full max-w-7xl space-y-6">
@@ -59,7 +58,7 @@ export default function Projects({ session }:{session:Session | null}) {
           {/* Projects Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {projectList.map((project) => (
-              <ProjectCard key={project.id} project={project} />
+              <ProjectCard session={session} key={project.id} project={project} />
             ))}
           </div>
 
@@ -81,7 +80,18 @@ export default function Projects({ session }:{session:Session | null}) {
   );
 }
 
-function ProjectCard({ project }: { project: Project }) {
+function ProjectCard({ project, session }: { project: Project; session: Session | null }) {
+
+  const handleProjectDelete = async (projectId: string) => {
+    await deleteProject(projectId, session?.user.id || "");
+    localStorage.removeItem("projectFiles");
+  }
+
+  const handleProjectSelection = async(projectId :string) => {
+    const FetchedProject = await getProject(projectId)
+    console.log("Fetched : ",FetchedProject);
+  }
+
   const statusColor = {
     Active: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200',
     'On Hold': 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200',
@@ -89,14 +99,14 @@ function ProjectCard({ project }: { project: Project }) {
   };
 
   return (
-    <Card className="hover:shadow-lg transition-shadow">
+    <Card onClick={() => handleProjectSelection(project.id)} className="hover:shadow-lg transition-shadow hover:cursor-pointer">
       <CardHeader className="pb-3">
         <div className="flex justify-between items-start">
           <div className="flex-1">
             <CardTitle>{project.name}</CardTitle>
             <CardDescription className="mt-2">{project.description}</CardDescription>
           </div>
-          <Button variant="ghost" size="icon">
+          <Button onClick={() => handleProjectDelete(project.id)} variant="ghost" size="icon">
             <Trash className="w-4 h-4" />
           </Button>
         </div>

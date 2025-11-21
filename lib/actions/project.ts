@@ -23,7 +23,7 @@ export async function getProject(projectId: string) {
   if (!project) {
     throw new Error("Project not found");
   }
-  const fileNode = await zipToFileNode(project.zipData.buffer);
+  const fileNode = await zipToFileNode(project.zipData);
   
   return {
     ...project,
