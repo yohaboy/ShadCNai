@@ -8,7 +8,7 @@ export async function createProject(userId: string, name: string, zipData: Buffe
     data: {
       userId,
       name,
-      zipData: new Uint8Array(zipData),
+      zipData: Buffer.from(zipData),
       description
     }
   });
