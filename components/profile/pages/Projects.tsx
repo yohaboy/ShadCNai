@@ -19,6 +19,7 @@ interface Project {
 type Session = typeof auth.$Infer.Session;
 
 export default function Projects({ session }:{session:Session | null}) {
+  const router = useRouter();
   const [projectList, setProjectList] = useState<Project[]>([]);
 
   useEffect(() => {
@@ -42,6 +43,11 @@ export default function Projects({ session }:{session:Session | null}) {
     };
   }, []);
 
+  const handleNewProject = () =>{
+    localStorage.removeItem("projectFiles");
+    router.push('/dashboard');
+  }
+
   return (
       <div className='flex justify-center w-full px-4 py-6'>
         <div className="w-full max-w-7xl space-y-6">
@@ -50,7 +56,7 @@ export default function Projects({ session }:{session:Session | null}) {
               <h1 className="text-3xl font-bold">Projects</h1>
               <p className="text-muted-foreground mt-1">Manage and track your active projects</p>
             </div>
-            <Button>
+            <Button onClick={handleNewProject}>
               <Plus className="w-4 h-4 mr-2" />
               New Project
             </Button>

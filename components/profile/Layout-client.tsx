@@ -20,7 +20,7 @@ export default function Layout({ session }:{session:Session | null}) {
       case 'overview':
         return <Overview />;
       case 'profile':
-        return <Profile />;
+        return <Profile session={session}/>;
       case 'projects':
         return <Projects session={session} />;
       case 'billing':
