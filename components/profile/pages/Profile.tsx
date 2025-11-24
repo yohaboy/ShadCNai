@@ -91,7 +91,7 @@ export default function Profile({ session }: { session: Session | null }) {
         <Card>
           <CardHeader>
             <CardTitle>Edit Information</CardTitle>
-            <CardDescription className='text-red-400 text-xs'> * goto settings to update your password</CardDescription>
+            <CardDescription className='text-green-400 text-xs'> * to update your password goto settings </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
