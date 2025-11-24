@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { useEffect, useState } from 'react';
 import { deleteProject, getProject, getUserProjects } from '@/lib/actions/project';
 import { auth } from '@/lib/auth';
+import { useRouter } from 'next/navigation';
 
 interface Project {
   id: string;
@@ -82,6 +83,8 @@ export default function Projects({ session }:{session:Session | null}) {
 
 function ProjectCard({ project, session }: { project: Project; session: Session | null }) {
 
+  const router = useRouter();
+
   const handleProjectDelete = async (projectId: string) => {
     await deleteProject(projectId, session?.user.id || "");
     localStorage.removeItem("projectFiles");
@@ -89,7 +92,8 @@ function ProjectCard({ project, session }: { project: Project; session: Session 
 
   const handleProjectSelection = async(projectId :string) => {
     const FetchedProject = await getProject(projectId)
-    console.log("Fetched : ",FetchedProject);
+    localStorage.setItem('projectFiles', JSON.stringify(FetchedProject.fileNode));
+    router.push('/dashboard');
   }
 
   const statusColor = {
