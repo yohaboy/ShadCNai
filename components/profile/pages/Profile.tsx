@@ -14,8 +14,6 @@ type Session = typeof auth.$Infer.Session;
 export default function Profile({ session }: { session: Session | null }) {
   const [name, setName] = useState(session?.user.name || '');
   const [email, setEmail] = useState(session?.user.email || '');
-  const [oldPassword, setOldPassword] = useState('');
-  const [newPassword, setNewPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
   const handleUpdateProfile = async () => {
@@ -32,24 +30,12 @@ export default function Profile({ session }: { session: Session | null }) {
       if (email !== session.user.email) {
         await changeEmail({ newEmail: email });
       }
-
-      // Update password
-      if (newPassword && oldPassword) {
-        await changePassword({
-          newPassword: newPassword,
-          currentPassword: oldPassword,
-          revokeOtherSessions: true,
-        })
-      }
-
       alert('Profile updated successfully!');
     } catch (err) {
       console.error(err);
       alert('Failed to update profile. Check console for details.');
     } finally {
       setLoading(false);
-      setOldPassword('');
-      setNewPassword('');
     }
   };
 
@@ -59,7 +45,7 @@ export default function Profile({ session }: { session: Session | null }) {
         {/* Profile Header */}
         <Card>
           <CardContent className="pt-6 flex items-start gap-6">
-            <div className="w-24 h-24 rounded-lg bg-primary flex items-center justify-center text-4xl font-bold text-primary-foreground">
+            <div className="w-24 h-24 rounded-lg bg-black/20 flex items-center justify-center text-4xl font-bold text-primary-foreground">
               <User2 size={34} />
             </div>
             <div className="flex-1">
@@ -105,10 +91,10 @@ export default function Profile({ session }: { session: Session | null }) {
         <Card>
           <CardHeader>
             <CardTitle>Edit Information</CardTitle>
+            <CardDescription className='text-red-400 text-xs'> * goto settings to update your password</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="flex flex-col gap-4">
                 <div>
                   <Label htmlFor="full-name">Full Name</Label>
                   <Input
@@ -128,35 +114,10 @@ export default function Profile({ session }: { session: Session | null }) {
                     className="mt-2"
                   />
                 </div>
-              </div>
-
-              <div className="flex flex-col gap-4">
-                <div>
-                  <Label htmlFor="oldpassword">Old Password</Label>
-                  <Input
-                    type="password"
-                    id="oldpassword"
-                    value={oldPassword}
-                    onChange={(e) => setOldPassword(e.target.value)}
-                    className="mt-2"
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="newpassword">New Password</Label>
-                  <Input
-                    type="password"
-                    id="newpassword"
-                    value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
-                    className="mt-2"
-                  />
-                </div>
-              </div>
             </div>
-
+            
             <Button
-              className="mt-2 hover:cursor-pointer"
+              className="mt-2 bg-black/20 hover:bg-black/80 hover:cursor-pointer"
               onClick={handleUpdateProfile}
               disabled={loading}
             >

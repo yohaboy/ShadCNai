@@ -56,7 +56,7 @@ export default function Projects({ session }:{session:Session | null}) {
               <h1 className="text-3xl font-bold">Projects</h1>
               <p className="text-muted-foreground mt-1">Manage and track your active projects</p>
             </div>
-            <Button onClick={handleNewProject}>
+            <Button className='bg-black/30 hover:bg-black/80' onClick={handleNewProject}>
               <Plus className="w-4 h-4 mr-2" />
               New Project
             </Button>
@@ -75,7 +75,7 @@ export default function Projects({ session }:{session:Session | null}) {
                 <Archive className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
                 <h3 className="text-lg font-semibold mb-2">No projects yet</h3>
                 <p className="text-muted-foreground mb-4">Create your first project to get started</p>
-                <Button>
+                <Button className='bg-black/30 hover:bg-black/80'>
                   <Plus className="w-4 h-4 mr-2" />
                   Create Project
                 </Button>

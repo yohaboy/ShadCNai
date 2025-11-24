@@ -6,76 +6,42 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { useState } from 'react';
+import { changePassword } from '@/lib/auth-client';
+import { auth } from '@/lib/auth';
 
-export default function Settings() {
-  const [activeTab, setActiveTab] = useState<'general' | 'security'>('general');
+type Session = typeof auth.$Infer.Session;
+
+export default function Settings({ session }: { session: Session | null }) {
+  const [oldPassword, setOldPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const handlePasswordUpdate = async () => {
+      if (!session) return;
+        setLoading(true);
+      try {  
+        if (newPassword && oldPassword) {
+          await changePassword({
+            newPassword: newPassword,
+            currentPassword: oldPassword,
+            revokeOtherSessions: true,
+          })
+        }
+        alert('Password updated successfully!');
+
+      } catch (err) {
+        console.error(err);
+        alert('Failed to update profile. Check console for details.');
+      } finally {
+        setLoading(false);
+        setOldPassword('');
+        setNewPassword('');
+      }
+    };
 
   return (
       <div className='flex justify-center w-full px-4 py-6'>
         <div className="w-full max-w-5xl space-y-6">
-          {/* Tabs */}
-          <div className="flex gap-2 border-b border-border">
-            {(['general', 'security'] as const).map((tab) => (
-              <button
-                key={tab}
-                onClick={() => setActiveTab(tab)}
-                className={`px-4 py-2 font-medium text-sm border-b-2 transition-colors ${
-                  activeTab === tab
-                    ? 'border-primary text-primary'
-                    : 'border-transparent text-muted-foreground hover:text-foreground'
-                }`}
-              >
-                {tab.charAt(0).toUpperCase() + tab.slice(1)}
-              </button>
-            ))}
-          </div>
-
-          {/* General Settings */}
-          {activeTab === 'general' && (
-            <div className="space-y-4">
-              <Card>
-                <CardHeader>
-                  <CardTitle>General Settings</CardTitle>
-                  <CardDescription>Manage your account preferences</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  <div className="space-y-2">
-                    <Label htmlFor="theme">Theme</Label>
-                    <select className="w-full p-2 rounded-lg border border-border bg-background text-foreground">
-                      <option>Light</option>
-                      <option>Dark</option>
-                      <option>System</option>
-                    </select>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="language">Language</Label>
-                    <select className="w-full p-2 rounded-lg border border-border bg-background text-foreground">
-                      <option>English</option>
-                      <option>Spanish</option>
-                      <option>French</option>
-                      <option>German</option>
-                    </select>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="timezone">Timezone</Label>
-                    <select className="w-full p-2 rounded-lg border border-border bg-background text-foreground">
-                      <option>UTC-8 (Pacific Time)</option>
-                      <option>UTC-5 (Eastern Time)</option>
-                      <option>UTC (Greenwich Mean Time)</option>
-                      <option>UTC+1 (Central European Time)</option>
-                    </select>
-                  </div>
-
-                  <Button>Save Preferences</Button>
-                </CardContent>
-              </Card>
-            </div>
-          )}
-          
-          {/* Security Settings */}
-          {activeTab === 'security' && (
             <div className="space-y-4">
               <Card>
                 <CardHeader>
@@ -83,44 +49,54 @@ export default function Settings() {
                   <CardDescription>Protect your account</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
-                  <div className="p-4 bg-accent rounded-lg flex items-start gap-3">
+                  <div className="p-4 bg-black/20 rounded-lg flex items-start gap-3">
                     <Lock className="w-5 h-5 text-primary mt-1" />
                     <div className="flex-1">
                       <p className="font-medium">Two-Factor Authentication</p>
                       <p className="text-sm text-muted-foreground mt-1">Add an extra layer of security to your account</p>
                       <Button variant="outline" className="mt-3">
-                        Enable 2FA
+                        comming soon ...
                       </Button>
                     </div>
                   </div>
 
-                  <div className="p-4 bg-accent rounded-lg flex items-start gap-3">
+                  <div className="p-4 bg-black/20 rounded-lg flex items-start gap-3">
                     <Eye className="w-5 h-5 text-primary mt-1" />
                     <div className="flex-1">
                       <p className="font-medium">Active Sessions</p>
                       <p className="text-sm text-muted-foreground mt-1">Manage your active sessions across devices</p>
                       <Button variant="outline" className="mt-3">
-                        View Sessions
+                        comming soon ...
                       </Button>
                     </div>
                   </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="current-password">Current Password</Label>
-                    <Input id="current-password" type="password" placeholder="Enter current password" />
+                  <div>
+                    <Label htmlFor="oldpassword">Old Password</Label>
+                    <Input
+                      type="password"
+                      id="oldpassword"
+                      value={oldPassword}
+                      onChange={(e) => setOldPassword(e.target.value)}
+                      className="mt-2"
+                    />
                   </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="new-password">New Password</Label>
-                    <Input id="new-password" type="password" placeholder="Enter new password" />
+                  <div>
+                    <Label htmlFor="newpassword">New Password</Label>
+                    <Input
+                      type="password"
+                      id="newpassword"
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      className="mt-2"
+                    />
                   </div>
-
-                  <Button>Update Password</Button>
+                  <Button className="mt-2 bg-black/20 hover:bg-black/80 hover:cursor-pointer" onClick={handlePasswordUpdate}>{loading ? 'Updating...' : 'Update Password'}</Button>
                 </CardContent>
               </Card>
             </div>
-          )}
-    </div>
+        </div>
       </div>
   );
 }

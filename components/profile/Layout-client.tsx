@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import Overview from './pages/Overview';
 import Profile from './pages/Profile';
 import Projects from './pages/Projects';
 import Billing from './pages/Billing';
@@ -10,15 +9,13 @@ import Navigation from '../base/NavBar';
 import Sidebar from './SideBar';
 import { auth } from '@/lib/auth';
 
-export type PageType = 'overview' | 'profile' | 'projects' | 'billing' | 'settings';
+export type PageType = 'profile' | 'projects' | 'billing' | 'settings';
 type Session = typeof auth.$Infer.Session;
 
 export default function Layout({ session }:{session:Session | null}) {
-  const [currentPage, setCurrentPage] = useState<PageType>('overview');
+  const [currentPage, setCurrentPage] = useState<PageType>('profile');
   const renderPage = () => {
     switch (currentPage) {
-      case 'overview':
-        return <Overview />;
       case 'profile':
         return <Profile session={session}/>;
       case 'projects':
@@ -26,9 +23,9 @@ export default function Layout({ session }:{session:Session | null}) {
       case 'billing':
         return <Billing />;
       case 'settings':
-        return <Settings />;
+        return <Settings session={session}/>;
       default:
-        return <Overview />;
+        return <Profile session={session}/>;
     }
   };
 
