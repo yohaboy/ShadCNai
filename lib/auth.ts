@@ -8,7 +8,8 @@ import { polar, checkout } from "@polar-sh/better-auth";
 const prisma = new PrismaClient()
 
 const polarClient = new Polar({
-    accessToken: process.env.POLAR_ACCESS_TOKEN
+    accessToken: process.env.POLAR_SANDBOX_ACCESS_TOKEN,
+    server: "sandbox"
 });
 
 export const auth = betterAuth({
@@ -43,19 +44,19 @@ export const auth = betterAuth({
                 checkout({
                     products: [
                         {
-                            productId: process.env.NEXT_PUBLIC_PRODUCT_ONE!,
+                            productId: process.env.NEXT_PUBLIC_PRODUCT_ONE_SANDBOX!,
                             slug: "Token"
                         },
                         {
-                            productId: process.env.NEXT_PUBLIC_PRODUCT_TWO!,
+                            productId: process.env.NEXT_PUBLIC_PRODUCT_TWO_SANDBOX!,
                             slug: "Token"
                         },
                         {
-                            productId: process.env.NEXT_PUBLIC_PRODUCT_THREE!,
+                            productId: process.env.NEXT_PUBLIC_PRODUCT_THREE_SANDBOX!,
                             slug: "Token"
                         }
                     ],
-                    successUrl: process.env.POLAR_SUCCESS_URL,
+                    successUrl: process.env.POLAR_SANDBOX_SUCCESS_URL,
                     authenticatedUsersOnly: true
                 })
             ],
