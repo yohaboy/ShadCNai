@@ -38,7 +38,7 @@ export const auth = betterAuth({
                 checkout({
                     products: [
                         {
-                            productId: "95d5a0f8-c0a5-459b-be96-f182607132b9",
+                            productId: process.env.PRODUCT_ONE!,
                             slug: "Token"
                         }
                     ],

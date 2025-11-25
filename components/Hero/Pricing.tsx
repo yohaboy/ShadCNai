@@ -1,10 +1,14 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
+import { auth } from '@/lib/auth';
+import { authClient } from '@/lib/auth-client';
 import { Check } from 'lucide-react'
-import Link from 'next/link'
+import { useRouter } from 'next/navigation';
 
-export default function PricingSection() {
+type Session = typeof auth.$Infer.Session;
+
+export default function PricingSection({ session }:{session:Session | null}) {
   const plans = [
     { name: 'Starter', tokens: '100 tokens', price:"10$" ,popular: false },
     { name: 'Professional', tokens: '500 tokens', price:"40$" ,popular: true },
@@ -17,6 +21,18 @@ export default function PricingSection() {
     'Core BuilderFlow features',
     'Priority support',
   ]
+
+  const router = useRouter()
+
+  const handleTokenPurchase = async (tokens: string) => {
+    if(!session?.user){
+      router.push('/auth/login')
+    }
+    await authClient.checkout({
+      products : process.env.PRODUCT_ONE!,
+      slug: "Token",
+    })
+  }
 
   return (
     <section className="py-20 px-4 sm:px-6 lg:px-8">
@@ -53,14 +69,15 @@ export default function PricingSection() {
                 </div>
               </div>
 
-              <Link href="/auth/register" className="mb-8 w-full">
+              <div className="mb-8 w-full">
                 <Button
-                  className="w-full"
+                  onClick={() => handleTokenPurchase(plan.tokens)}
+                  className="w-full hover:cursor-pointer"
                   variant={plan.popular ? 'default' : 'outline'}
                 >
                   Get started
                 </Button>
-              </Link>
+              </div>
 
               <div className="space-y-4 flex-1">
                 {features.map((feature, featureIndex) => (

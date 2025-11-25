@@ -12,7 +12,7 @@ export default async function PricingPage() {
   return (
     <main className="min-h-screen bg-background">
       <Navigation session={session} />
-      <PricingSection />
+      <PricingSection session={session} />
       <Footer />
     </main>
   )
