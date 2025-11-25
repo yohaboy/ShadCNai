@@ -45,11 +45,11 @@ export default function Profile({ session }: { session: Session | null }) {
         {/* Profile Header */}
         <Card>
           <CardContent className="pt-6 flex items-start gap-6">
-            <div className="w-24 h-24 rounded-lg bg-black/20 flex items-center justify-center text-4xl font-bold text-primary-foreground">
+            <div className="w-24 h-24 rounded-lg bg-black/10 flex items-center justify-center text-4xl font-bold text-primary-foreground">
               <User2 size={34} />
             </div>
             <div className="flex-1">
-              <h2 className="text-2xl font-bold">{session?.user.name}</h2>
+              <h2 className="text-2xl font-bold uppercase">{session?.user.name}</h2>
               <p className="text-muted-foreground mt-1">{session?.user.tokens} Tokens</p>
             </div>
           </CardContent>
@@ -61,15 +61,15 @@ export default function Profile({ session }: { session: Session | null }) {
             <CardTitle>Account Information</CardTitle>
             <CardDescription>View and manage your account details</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="flex items-center gap-3 p-4 bg-black/20 rounded-lg">
+          <CardContent className="flex flex-col gap-4">
+            <div className="flex items-center gap-3 p-4 bg-black/10 rounded-lg">
               <Mail className="w-5 h-5 text-primary" />
               <div>
                 <p className="text-sm text-muted-foreground">Email</p>
                 <p className="font-medium">{session?.user.email}</p>
               </div>
             </div>
-            <div className="flex items-center gap-3 p-4 bg-black/20 rounded-lg">
+            <div className="flex items-center gap-3 p-4 bg-black/10 rounded-lg">
               <Calendar className="w-5 h-5 text-primary" />
               <div>
                 <p className="text-sm text-muted-foreground">Joined</p>

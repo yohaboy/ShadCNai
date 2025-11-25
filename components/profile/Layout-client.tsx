@@ -21,7 +21,7 @@ export default function Layout({ session }:{session:Session | null}) {
       case 'projects':
         return <Projects session={session} />;
       case 'billing':
-        return <Billing />;
+        return <Billing session={session}/>;
       case 'settings':
         return <Settings session={session}/>;
       default:

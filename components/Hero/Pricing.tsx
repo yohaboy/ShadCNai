@@ -34,11 +34,11 @@ export default function PricingSection({ session }:{session:Session | null}) {
     let product = '';
 
     if (tokens === '100 tokens') {
-      product = process.env.NEXT_PUBLIC_PRODUCT_ONE!;
+      product = process.env.NEXT_PUBLIC_PRODUCT_ONE_SANDBOX!;
     } else if (tokens === '500 tokens') {
-      product = process.env.NEXT_PUBLIC_PRODUCT_TWO!;
+      product = process.env.NEXT_PUBLIC_PRODUCT_TWO_SANDBOX!;
     } else if (tokens === '1000 tokens') {
-      product = process.env.NEXT_PUBLIC_PRODUCT_THREE!;
+      product = process.env.NEXT_PUBLIC_PRODUCT_THREE_SANDBOX!;
     }
 
     await authClient.checkout({
