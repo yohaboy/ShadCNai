@@ -5,6 +5,7 @@ import { auth } from '@/lib/auth';
 import { authClient } from '@/lib/auth-client';
 import { Check } from 'lucide-react'
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 
 type Session = typeof auth.$Infer.Session;
 
@@ -23,12 +24,13 @@ export default function PricingSection({ session }:{session:Session | null}) {
   ]
 
   const router = useRouter()
+  const [loading, setLoading] = useState(false);
 
   const handleTokenPurchase = async (tokens: string) => {
     if(!session?.user){
       router.push('/auth/login')
     }
-
+    setLoading(true);
     let product = '';
 
     if (tokens === '100 tokens') {
@@ -42,6 +44,7 @@ export default function PricingSection({ session }:{session:Session | null}) {
     await authClient.checkout({
       products : [product],
     })
+    setLoading(false);
   }
 
   return (
@@ -85,7 +88,7 @@ export default function PricingSection({ session }:{session:Session | null}) {
                   className="w-full hover:cursor-pointer"
                   variant={plan.popular ? 'default' : 'outline'}
                 >
-                  Get started
+                  {loading ? 'Processing...' : 'Get started'}
                 </Button>
               </div>
 
