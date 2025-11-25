@@ -38,7 +38,15 @@ export const auth = betterAuth({
                 checkout({
                     products: [
                         {
-                            productId: process.env.PRODUCT_ONE!,
+                            productId: process.env.NEXT_PUBLIC_PRODUCT_ONE!,
+                            slug: "Token"
+                        },
+                        {
+                            productId: process.env.NEXT_PUBLIC_PRODUCT_TWO!,
+                            slug: "Token"
+                        },
+                        {
+                            productId: process.env.NEXT_PUBLIC_PRODUCT_THREE!,
                             slug: "Token"
                         }
                     ],

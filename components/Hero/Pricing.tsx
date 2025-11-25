@@ -28,9 +28,19 @@ export default function PricingSection({ session }:{session:Session | null}) {
     if(!session?.user){
       router.push('/auth/login')
     }
+
+    let product = '';
+
+    if (tokens === '100 tokens') {
+      product = process.env.NEXT_PUBLIC_PRODUCT_ONE!;
+    } else if (tokens === '500 tokens') {
+      product = process.env.NEXT_PUBLIC_PRODUCT_TWO!;
+    } else if (tokens === '1000 tokens') {
+      product = process.env.NEXT_PUBLIC_PRODUCT_THREE!;
+    }
+
     await authClient.checkout({
-      products : process.env.PRODUCT_ONE!,
-      slug: "Token",
+      products : [product],
     })
   }
 
