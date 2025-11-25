@@ -8,6 +8,7 @@ import { Label } from '@/components/ui/label'
 import { Checkbox } from '@/components/ui/checkbox'
 import { signUp } from '@/lib/auth-client'
 import { useRouter } from 'next/navigation'
+import { syncPolarCustomerId } from '@/lib/actions/user';
 
 
 export default function RegisterForm() {
@@ -48,7 +49,8 @@ export default function RegisterForm() {
         email: formData.email,
         password: formData.password,
       });
-
+      await syncPolarCustomerId(result.data?.user.id!);
+      
       if (result.data?.user) {
         router.push("/dashboard");
       }

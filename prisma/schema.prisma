@@ -25,7 +25,7 @@ model User {
   tokens        Int?
   sessions      Session[]
   accounts      Account[]
-
+  polarCustomerId  String?
   projects Project[]
 
   @@unique([email])

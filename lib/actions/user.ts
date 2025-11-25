@@ -1,42 +1,25 @@
 "use server"
 
-import  prisma from "../prisma"
+import { Polar } from "@polar-sh/sdk";
+import  prisma from "../prisma";
 
-export async function getUserById(userId: string) {
-  const user = await prisma.user.findUnique({
-    where: { id: userId },
-    select: {
-      id: true,
-      name: true,
-      email: true,
-      tokens: true,
-      createdAt: true,
-      updatedAt: true
+const polarClient = new Polar({
+  accessToken: process.env.POLAR_ACCESS_TOKEN!,
+});
+
+export async function syncPolarCustomerId(userId: string) {
+  try {
+    const polarCustomer = await polarClient.customers.getExternal({externalId: userId});
+
+    if (polarCustomer && polarCustomer.id) {
+      await prisma.user.update({
+        where: { id: userId },
+        data: { polarCustomerId: polarCustomer.id },
+      });
+    } else {
+      console.log(`Polar customer not found`);
     }
-  });
-  if (!user) {
-    throw new Error("User not found");
+  } catch (error) {
+    console.error("Error syncing Polar customer:", error);
   }
-  return user;
 }
-
-export async function updateUserTokens(userId: string, tokens: number) {
-  const user = await prisma.user.update({
-    where: { id: userId },
-    data: { tokens }
-  });
-  return user;
-}
-
-export async function updateUserProfile(userId: string, name?: string, email?: string, password?: string) {
-  const data: any = {};
-  if (name) data.name = name;
-  if (email) data.email = email;
-  if (password) data.password = password; // In a real app, hash the password before storing
-
-  const user = await prisma.user.update({
-    where: { id: userId },
-    data
-  });
-  return user;
-}       

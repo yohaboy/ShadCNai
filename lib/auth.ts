@@ -27,6 +27,11 @@ export const auth = betterAuth({
             required: false,      
             defaultValue: 10, 
             input: true
+          },
+        polarCustomerId: {
+            type: "string",
+            required: false,
+            input: false 
           }
         }
     },
