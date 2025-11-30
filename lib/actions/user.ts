@@ -2,10 +2,10 @@
 
 import { Polar } from "@polar-sh/sdk";
 import  prisma from "../prisma";
-import { authClient } from "../auth-client";
 
 const polarClient = new Polar({
   accessToken: process.env.POLAR_SANDBOX_ACCESS_TOKEN!,
+  server: "sandbox",
 });
 
 const orgClient = new Polar({
@@ -29,7 +29,6 @@ export async function syncPolarCustomerId(userId: string) {
     console.error("Error syncing Polar customer:", error);
   }
 }
-
 
 export async function getCustomerTransactions(polarCustomerId: string) {
   const res = await orgClient.orders.list({

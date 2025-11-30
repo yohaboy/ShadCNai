@@ -1,6 +1,7 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
+import { syncPolarCustomerId } from '@/lib/actions/user';
 import { auth } from '@/lib/auth';
 import { authClient } from '@/lib/auth-client';
 import { Check } from 'lucide-react'
@@ -25,6 +26,12 @@ export default function PricingSection({ session }:{session:Session | null}) {
 
   const router = useRouter()
   const [loading, setLoading] = useState(false);
+  
+  const tokenValues: Record<string, number> = {
+    "100 tokens": 100,
+    "500 tokens": 500,
+    "1000 tokens": 1000,
+  };
 
   const handleTokenPurchase = async (tokens: string) => {
     if(!session?.user){
@@ -32,6 +39,7 @@ export default function PricingSection({ session }:{session:Session | null}) {
     }
     setLoading(true);
     let product = '';
+    const tokenAmount = tokenValues[tokens];
 
     if (tokens === '100 tokens') {
       product = process.env.NEXT_PUBLIC_PRODUCT_ONE_SANDBOX!;
@@ -43,6 +51,7 @@ export default function PricingSection({ session }:{session:Session | null}) {
 
     await authClient.checkout({
       products : [product],
+      metadata: { tokens:tokenAmount },
     })
     setLoading(false);
   }
