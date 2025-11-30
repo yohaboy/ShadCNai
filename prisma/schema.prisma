@@ -90,3 +90,12 @@ model Project {
 
   @@map("project")
 }
+
+
+model ProcessedCheckout {
+  id         String   @id @default(cuid())
+  checkoutId String   @unique
+  userId     String
+  tokens     Int
+  createdAt  DateTime @default(now())
+}

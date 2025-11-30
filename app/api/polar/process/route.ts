@@ -39,13 +39,24 @@ if (!session?.user) {
 
   const tokens = Number(checkout.metadata?.tokens ?? 0);
 
-  if (tokens > 0) {
+  const alreadyProcessed = await prisma.processedCheckout.findUnique({
+    where: { checkoutId: checkout.id },
+  });
+
+  if (!alreadyProcessed && tokens > 0) {
     await prisma.user.update({
       where: { id: session.user.id },
+      data: { tokens: { increment: tokens } },
+    });
+
+    await prisma.processedCheckout.create({
       data: {
-        tokens: { increment: tokens },
+        checkoutId: checkout.id,
+        userId: session.user.id,
+        tokens,
       },
     });
   }
+  
   return NextResponse.redirect(`${origin}/profile?success=true`)
 }
