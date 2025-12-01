@@ -195,6 +195,7 @@ export default function DashboardPage({ session }:{session:Session | null}) {
 
             {showAIPanel && (
               <AIPanel
+                session={session}
                 onGenerateFile={handleGenerateFile}
                 projectContext={`Current project structure: ${JSON.stringify(Object.keys(fileStructure))}`}
               />

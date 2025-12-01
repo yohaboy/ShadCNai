@@ -47,5 +47,16 @@ export async function getCustomerTransactions(polarCustomerId: string) {
   return importantOrders;
 }
 
+export async function deductTokens(userId: string) {
+  await prisma.user.update({
+    where: { id: userId },
+    data: {
+      tokens:{
+        decrement: 5,
+      }
+    },
+  });
+}     
+
 
 

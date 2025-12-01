@@ -5,18 +5,23 @@ import { Zap, Send, AlertCircle, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { useAIGeneration } from "@/hooks/use-ai-generation"
+import { deductTokens } from "@/lib/actions/user"
+import { auth } from "@/lib/auth"
+
+type Session = typeof auth.$Infer.Session;
 
 interface AIPanelProps {
   onGenerateFile: (file:FileNode) => void
   projectContext?: string
-  isOpen?: boolean
+  isOpen?: boolean,
+  session: Session | null
 }
 
 interface FileNode {
   [key: string]: string | FileNode
 }
 
-export function AIPanel({ onGenerateFile, projectContext, isOpen = true }: AIPanelProps) {
+export function AIPanel({ onGenerateFile, projectContext, isOpen = true , session}: AIPanelProps) {
   const [prompt, setPrompt] = useState("")
   const [generatedFiles, setGeneratedFiles] = useState<FileNode>({})
   const { generateCode, loading, error } = useAIGeneration()
@@ -25,7 +30,10 @@ export function AIPanel({ onGenerateFile, projectContext, isOpen = true }: AIPan
     if (!prompt.trim()) return
 
     try {
-      const files = await generateCode(prompt, projectContext)
+      const files = await generateCode(prompt)
+      if(files){
+        deductTokens(session?.user.id || "")
+      }
       setGeneratedFiles(files)
       onGenerateFile(files);
       setPrompt("")

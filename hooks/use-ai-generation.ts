@@ -7,7 +7,7 @@ export function useAIGeneration() {
   const [error, setError] = useState<string | null>(null)
 
   const generateCode = useCallback(
-      async (prompt: string, projectContext?: string) => {
+      async (prompt: string) => {
         setLoading(true);
         setError(null);
 
@@ -15,7 +15,7 @@ export function useAIGeneration() {
           const response = await fetch("/api/ai/generate", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ prompt, projectContext }),
+            body: JSON.stringify({ prompt }),
           });
 
           const data = await response.json();
