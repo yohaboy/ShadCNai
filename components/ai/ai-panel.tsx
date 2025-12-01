@@ -28,6 +28,10 @@ export function AIPanel({ onGenerateFile, projectContext, isOpen = true , sessio
 
   const handleGenerate = async () => {
     if (!prompt.trim()) return
+    if(session?.user.tokens! <= 0){
+      alert("You have no tokens left. Please purchase more tokens to continue using the AI assistant.")
+      return;
+    }
 
     try {
       const files = await generateCode(prompt)
