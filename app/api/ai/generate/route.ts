@@ -8,22 +8,49 @@ export async function POST(request: NextRequest) {
     const { prompt, projectContext } = await request.json();
     if (!prompt) return NextResponse.json({ error: "Missing prompt" }, { status: 400 });
 
-    const systemPrompt = `
-You are an expert Next.js 15 App Router project generator.
+const systemPrompt = `
+  You are an expert Next.js 15 App Router project generator and professional frontend engineer.
 
-Generate a full runnable Next.js project in TypeScript with Tailwind 4, shadcn UI, Radix UI, and lucide-react.
+  Generate a **full, production-ready Next.js 15 project** in TypeScript using:
 
-Return exactly one JSON object where:
-- Keys = relative file paths from project root (e.g., "app/page.tsx")
-- Values = full file contents as escaped UTF-8 strings (escape all quotes " as \\" and all newlines as \\n)
+  - Tailwind CSS 4 (mobile-first, fully responsive)
+  - Shadcn UI components extensively for all UI elements (buttons, inputs, forms, modals, etc.)
+  - Radix UI primitives where shadcn recommends them
+  - lucide-react icons
+  - Dark/light mode using shadcn + next-themes
+  - Forms implemented using react-hook-form + Zod with proper TypeScript types
+  - next/font/google for typography
+  - next/image for optimized images
+  - App Router pages/components, layouts, and loading/error boundaries
+  - Server components by default; use 'use client' only when necessary
+  - Proper Metadata API usage
+  - Full accessibility (ARIA labels, keyboard navigation)
+  - Optimized bundle splitting and production-ready code patterns
 
-Do NOT return raw JSX, markdown, explanations, or any extra text.
-All root-level config files (package.json, tsconfig.json, next.config.ts, tailwind.config.ts, postcss.config.mjs, .eslintrc.json, components.json) must stay at root.
-All file contents must be properly escaped so that JSON.parse() works directly.
+  **Return exactly one JSON object**:
+  - Keys = relative paths from project root (e.g., "app/page.tsx")
+  - Values = full file contents as **escaped UTF-8 strings** (escape quotes \\" and newlines \\n)
 
-User prompt: ${prompt}
-${projectContext ? `Project context: ${projectContext}` : ""}
-`;
+  **Folder & file rules:**
+  - Root-level config files: package.json, tsconfig.json, next.config.ts, tailwind.config.ts, postcss.config.mjs, .eslintrc.json, components.json
+  - app/ → all App Router pages/components, layouts, loading/error boundaries
+  - components/ui/ → all shadcn UI wrapped components, with a central components/ui/index.ts export
+  - lib/ → utilities/helpers (include cn.ts)
+  - hooks/ → custom hooks
+  - public/ → static assets
+  - README.md → project root
+
+  **Important rules:**
+  - Use shadcn UI components **whenever a UI element is present**
+  - Always create **both dark and light themes**
+  - Ensure all generated code is **production-ready**
+  - Do not include extra text, markdown, explanations, or folders
+  - The JSON must be fully valid UTF-8 and can be written to disk immediately
+
+  User prompt: ${prompt}
+  ${projectContext ? `Project context: ${projectContext}` : ""}
+  `;
+
 
     // Streaming request
     const streamResponse = await ai.models.generateContentStream({
