@@ -9,7 +9,7 @@ import { auth } from "@/lib/auth"
 import { headers } from "next/headers"
 
 export const metadata: Metadata = {
-  title: "AI Project Builder",
+  title: "VibeCN",
 }
 
 

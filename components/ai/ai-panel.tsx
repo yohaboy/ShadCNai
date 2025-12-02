@@ -79,7 +79,7 @@ export function AIPanel({ onGenerateFile, projectContext, isOpen = true , sessio
         )}
 
         {/* Generated code preview */}
-        {Object.keys(generatedFiles).length > 0 && (
+        {Object.keys(generatedFiles).length > 0 ? (
           <div className="space-y-2">
             <label className="text-xs font-medium text-gray-400 uppercase tracking-wide">Generated Files</label>
             <div className="bg-[#1e1e1e] border border-[#3e3e42] rounded p-3 max-h-60 overflow-auto text-xs text-gray-300 font-mono">
@@ -104,7 +104,7 @@ export function AIPanel({ onGenerateFile, projectContext, isOpen = true , sessio
               Succesfull
             </Button>
           </div>
-        )}
+        ) : <span className="text-red-500 font-bold p-4">It could take 2-5 minutes please wait patiently . . .</span>}
       </div>
 
       {/* Action button */}

@@ -34,7 +34,7 @@ export function WorkspaceHeader({
   return (
     <header className="bg-[#252526] border-b border-[#3e3e42] px-8 py-4 flex items-center justify-between">
       <div className="flex items-center gap-4">
-          <a href="/">
+          <a href="/profile">
             <Button variant="outline" className="flex items-center gap-2 bg-[#3e3e42] text-gray-300 hover:bg-[#3e3e42]/80">
               <FaArrowLeft size={14} />
               Back
