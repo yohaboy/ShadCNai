@@ -1,115 +1,60 @@
 import { NextRequest, NextResponse } from "next/server";
-import Cerebras from "@cerebras/cerebras_cloud_sdk";
+import { GoogleGenAI } from "@google/genai";
 
-// Initialize Cerebras client
-const cerebras = new Cerebras({
-  apiKey: process.env.CEREBRAS_API_KEY,
-});
-
-interface CerebrasChoice {
-  message: { content: string };
-}
-
-interface CerebrasCompletion {
-  choices: CerebrasChoice[];
-}
+const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
 export async function POST(request: NextRequest) {
   try {
-    const { prompt } = await request.json();
+    const { prompt, projectContext } = await request.json();
+    if (!prompt) return NextResponse.json({ error: "Missing prompt" }, { status: 400 });
 
-    if (!prompt) {
-      return NextResponse.json({ error: "Missing prompt" }, { status: 400 });
-    }
+    const systemPrompt = `
+You are an expert Next.js 15 App Router project generator.
 
-const systemPrompt = `
-You are an expert Next.js (App Router) project generator and production frontend engineer. Produce one single output: a JSON object whose keys are file paths (relative to project root) and values are the full file contents as UTF-8 strings. Do not include any other text, explanation, or extra files outside the JSON. The JSON must be valid and complete so a reviewer can write the files to disk, run npm install (or pnpm install), and npm run dev to run the app.
+Generate a full runnable Next.js project in TypeScript with Tailwind 4, shadcn UI, Radix UI, and lucide-react.
 
-Requirements — follow exactly:
+Return exactly one JSON object where:
+- Keys = relative file paths from project root (e.g., "app/page.tsx")
+- Values = full file contents as escaped UTF-8 strings (escape all quotes " as \\" and all newlines as \\n)
 
-1. Platform & versions
-- Next.js 15.x (App Router) with React 18+
-- TypeScript (.ts and .tsx only)
-- Tailwind CSS v4 for styling
-- shadcn UI primitives/components used extensively for all UI elements, organized under components/ui/* and exported via components/ui/index.ts
-- lucide-react for icons, Radix UI primitives where shadcn recommends them
-- Dark and Light mode fully supported and managed via shadcn UI
+Do NOT return raw JSX, markdown, explanations, or any extra text.
+All root-level config files (package.json, tsconfig.json, next.config.ts, tailwind.config.ts, postcss.config.mjs, .eslintrc.json, components.json) must stay at root.
+All file contents must be properly escaped so that JSON.parse() works directly.
 
-2. Output format
-- Return only a single JSON object mapping "relative/path/to/file" → "file contents\n..."
-- Use UNIX newlines (\n)
-- Do not include explanations, extra text, or files outside the JSON
-
-3. Project scope & structure
-- Full runnable Next.js 15 project using the App Router (app/)
-- TypeScript for all code
-- Include all config files: package.json, tsconfig.json, next.config.ts, tailwind.config.js, postcss.config.js
-- Include a global stylesheet (globals.css) with Tailwind directives
-- Include a README.md
-- Include a basic CI setup (GitHub Actions workflow)
-- Proper folder structure for components, lib/utils, and pages/app routes
-
-4. UI/UX requirements
-- Unique monochromatic design (no typical purple)
-- Modern, clean, minimal UI
-- Components use shadcn UI wherever possible
-- Include a sample homepage with at least: header/nav, hero section, card/grid section, footer
-- Use light/dark mode toggling via shadcn UI theming
-- Include sample buttons, inputs, and cards from shadcn components
-
-5. TypeScript & code quality
-- Type-safe props and hooks
-- Centralized component exports
-- No JavaScript files
-- Modern React patterns: functional components, hooks, proper folder imports
-
-6. Dependencies
-- All dependencies must be compatible with Next.js 15
-- Include Tailwind, shadcn UI, lucide-react, class-variance-authority, clsx, tailwind-merge, @radix-ui/* as required
-
-7. Optional
-- Include a utils folder with cn.ts (className helper)
-- Include global error.tsx and not-found.tsx pages
-- Include proper dark/light mode support in layout.tsx
-
-Now generate the project JSON accordingly. Only output the JSON object.
+User prompt: ${prompt}
+${projectContext ? `Project context: ${projectContext}` : ""}
 `;
 
-      const userPrompt = systemPrompt + "\nUser Request:\n" + prompt;
-
-    // Cerebras API call
-    const completionRaw = await cerebras.chat.completions.create({
-      messages: [{ role: "user", content: userPrompt }],
-      model: "llama-3.3-70b",
-      max_completion_tokens: 8192,
-      temperature: 0.2,
-      top_p: 1,
-      stream: false,
+    // Streaming request
+    const streamResponse = await ai.models.generateContentStream({
+      model: "gemini-2.5-flash-lite",
+      contents: systemPrompt,
     });
 
-    // Type cast to access choices safely
-    const completion = completionRaw as unknown as CerebrasCompletion;
+    let collectedText = "";
+    const decoder = new TextDecoder();
 
-    const rawText = completion.choices?.[0]?.message?.content?.trim();
-    if (!rawText) {
-      throw new Error("AI returned no content");
+    // Gemini stream is an async iterator
+    for await (const chunk of streamResponse) {
+      if (chunk?.candidates?.[0]?.content?.parts) {
+        for (const part of chunk.candidates[0].content.parts) {
+          collectedText += part?.text || "";
+        }
+      }
     }
 
-    // Clean code block wrappers if present
-    let cleaned = rawText;
-    if (cleaned.startsWith("```json")) {
-      cleaned = cleaned.replace(/^```json\s*/, "").replace(/```$/, "");
+    // Clean optional ```json fences
+    if (collectedText.startsWith("```json")) {
+      collectedText = collectedText.replace(/^```json\s*/, "").replace(/```$/, "");
     }
 
+    // Parse final escaped JSON
     let files: Record<string, string>;
     try {
-      files = JSON.parse(cleaned);
+      files = JSON.parse(collectedText);
     } catch (err) {
-      console.error("Failed to parse AI response:", cleaned.substring(0, 1000));
-      return NextResponse.json(
-        { error: "AI did not return valid JSON" },
-        { status: 500 }
-      );
+      console.error("Failed to parse AI response:", collectedText.substring(0, 1000));
+      return NextResponse.json({ error: "AI did not return valid JSON" }, { status: 500 });
     }
 
     return NextResponse.json({ success: true, files });
