@@ -11,6 +11,7 @@ import { StatusBar } from "@/components/ai/status-bar"
 import { exportAsZip, fileNodeToZipBuffer } from "@/hooks/export-zip"
 import { auth } from "@/lib/auth"
 import { createProject, getUserProjects } from "@/lib/actions/project"
+import { syncPolarCustomerId } from "@/lib/actions/user"
 
 interface FileNode {
   [key: string]: string | FileNode
@@ -66,6 +67,16 @@ export default function DashboardPage({ session }:{session:Session | null}) {
       localStorage.setItem("projectFiles", JSON.stringify(fileStructure))
     }
   }, [fileStructure])
+
+  useEffect(() => {
+    async function sync() {
+      if (session?.user && !session.user.polarCustomerId) {
+        await syncPolarCustomerId(session.user.id);
+      }
+    }
+    sync();
+  }, [session]);
+
 
 
   const nestFiles = (flatFiles: FileNode)=> {

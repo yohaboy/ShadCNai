@@ -23,12 +23,16 @@ export default function Billing({ session }: { session: Session | null }) {
   const router = useRouter();
 
   useEffect(() => {
+    if (!session?.user?.polarCustomerId) return;
+
     async function fetch() {
-      const result = await getCustomerTransactions(session?.user?.polarCustomerId!)
+      const result = await getCustomerTransactions(session?.user.polarCustomerId!);
       setInvoices(result);
     }
+
     fetch();
-  }, []);
+  }, [session]);
+
 
 
   return (

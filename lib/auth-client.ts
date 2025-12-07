@@ -7,4 +7,4 @@ export const authClient = createAuthClient({
         (process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"),
     plugins: [polarClient()]
 })
-export const {signIn,signUp,signOut,updateUser ,changeEmail , changePassword} = createAuthClient()
+export const {signIn,signUp,signOut,updateUser ,changeEmail , changePassword ,useSession} = createAuthClient()

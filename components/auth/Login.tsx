@@ -7,6 +7,8 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { signIn } from '@/lib/auth-client'
 import { useRouter } from 'next/navigation'
+import { syncPolarCustomerId } from '@/lib/actions/user'
+import { FaGoogle } from 'react-icons/fa'
 
 export default function LoginForm() {
   const [email, setEmail] = useState('')
@@ -14,6 +16,7 @@ export default function LoginForm() {
 
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,6 +37,20 @@ export default function LoginForm() {
       setLoading(false);
     }
     
+  };
+
+  const handleGoogleSignIn = async () => {
+    try {
+      setGoogleLoading(true);
+      await signIn.social({
+        provider: 'google',
+        callbackURL: '/dashboard',
+      });
+    } catch (err: any) {
+      alert(err.message || "Google Sign-In failed");
+    } finally {
+      setGoogleLoading(false);
+    }
   };
 
   return (
@@ -90,14 +107,15 @@ export default function LoginForm() {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
-          <Button variant="outline" type="button" className="bg-card border-border/50">
-            Google
-          </Button>
-          <Button variant="outline" type="button" className="bg-card border-border/50">
-            GitHub
-          </Button>
-        </div>
+        <Button
+          onClick={handleGoogleSignIn}
+          variant="outline"
+          type="button"
+          className="w-full flex items-center justify-center gap-4 bg-card border-border/50"
+        >
+          <FaGoogle className="text-lg text-muted-foreground" />
+          {googleLoading ? "Loading..." : "Google"}
+        </Button>
 
         <p className="text-center text-sm text-muted-foreground">
           Don&apos;t have an account?{' '}
