@@ -6,10 +6,14 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-
-  outputFileTracingIncludes: {
-    '/*': ['../lib/generated/prisma/**/*'],
-    '/api/**': ['../lib/generated/prisma/**/*'],
+  experimental: {
+    outputFileTracingIncludes: {
+      '/*': ['./lib/generated/prisma/**/*'],
+      '/api/**': ['./lib/generated/prisma/**/*'],
+    },
+  },
+  turbopack: {
+    root: __dirname,
   },
 }
 
