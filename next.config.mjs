@@ -6,6 +6,11 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
+
+  outputFileTracingIncludes: {
+    '/*': ['../lib/generated/prisma/**/*'],
+    '/api/**': ['../lib/generated/prisma/**/*'],
+  },
 }
 
 export default nextConfig
