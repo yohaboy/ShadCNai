@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Missing prompt" }, { status: 400 });
     }
 
-const systemPrompt = `
+    const systemPrompt = `
 You are an expert Next.js (App Router) project generator and production frontend engineer. Produce one single output: a JSON object whose keys are file paths (relative to project root) and values are the full file contents as UTF-8 strings. Do not include any other text, explanation, or extra files outside the JSON. The JSON must be valid and complete so a reviewer can write the files to disk, run npm install (or pnpm install), and npm run dev to run the app.
 
 Requirements — follow exactly:
@@ -75,7 +75,7 @@ Requirements — follow exactly:
 Now generate the project JSON accordingly. Only output the JSON object.
 `;
 
-      const userPrompt = systemPrompt + "\nUser Request:\n" + prompt;
+    const userPrompt = systemPrompt + "\nUser Request:\n" + prompt;
 
     // Cerebras API call
     const completionRaw = await cerebras.chat.completions.create({
@@ -107,7 +107,7 @@ Now generate the project JSON accordingly. Only output the JSON object.
     } catch (err) {
       console.error("Failed to parse AI response:", cleaned.substring(0, 1000));
       return NextResponse.json(
-        { error: "AI did not return valid JSON" },
+        { error: "The model is busy try again later" },
         { status: 500 }
       );
     }

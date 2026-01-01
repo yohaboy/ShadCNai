@@ -8,7 +8,7 @@ export async function POST(request: NextRequest) {
     const { prompt, projectContext } = await request.json();
     if (!prompt) return NextResponse.json({ error: "Missing prompt" }, { status: 400 });
 
-const systemPrompt = `
+    const systemPrompt = `
   You are an expert Next.js 15 App Router project generator and professional frontend engineer.
 
   Generate a **full, production-ready Next.js 15 project** in TypeScript using:
@@ -81,7 +81,7 @@ const systemPrompt = `
       files = JSON.parse(collectedText);
     } catch (err) {
       console.error("Failed to parse AI response:", collectedText.substring(0, 1000));
-      return NextResponse.json({ error: "AI did not return valid JSON" }, { status: 500 });
+      return NextResponse.json({ error: "The model is busy try again later" }, { status: 500 });
     }
 
     return NextResponse.json({ success: true, files });
