@@ -1,6 +1,6 @@
 "use client"
 
-import { Download, Plus, MoreVertical, Zap, User, Settings, LogOut, ArrowLeft } from "lucide-react"
+import { Download, Plus, MoreVertical, Zap, User, Settings, LogOut, ArrowLeft, Save } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "../ui/dropdown-menu"
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar"
@@ -12,6 +12,7 @@ interface WorkspaceHeaderProps {
   projectName?: string
   onNewProject?: () => void
   onExport?: () => void
+  onSave?: () => void
   onToggleAI?: () => void
   aiEnabled?: boolean
 }
@@ -20,26 +21,27 @@ export function WorkspaceHeader({
   projectName = "Untitled Project",
   onNewProject,
   onExport,
+  onSave,
   onToggleAI,
   aiEnabled = true,
 }: WorkspaceHeaderProps) {
 
   const router = useRouter();
 
-  const  handleSignout = async () => {
-      await signOut()
-      router.push("/auth/login")
+  const handleSignout = async () => {
+    await signOut()
+    router.push("/auth/login")
   }
 
   return (
     <header className="bg-[#252526] border-b border-[#3e3e42] px-8 py-4 flex items-center justify-between">
       <div className="flex items-center gap-4">
-          <a href="/profile">
-            <Button variant="outline" className="flex items-center gap-2 bg-[#3e3e42] text-gray-300 hover:bg-[#3e3e42]/80">
-              <FaArrowLeft size={14} />
-              Back
+        <a href="/profile">
+          <Button variant="outline" className="flex items-center gap-2 bg-[#3e3e42] text-gray-300 hover:bg-[#3e3e42]/80">
+            <FaArrowLeft size={14} />
+            Back
           </Button>
-          </a>
+        </a>
       </div>
 
       <div className="flex items-center gap-2">
@@ -47,9 +49,8 @@ export function WorkspaceHeader({
           <Button
             onClick={onToggleAI}
             variant="outline"
-            className={`flex items-center gap-2 ${
-              aiEnabled ? "bg-blue-600 text-white hover:bg-blue-700" : "bg-[#3e3e42] text-gray-300 hover:bg-[#4a4a50]"
-            }`}
+            className={`flex items-center gap-2 ${aiEnabled ? "bg-blue-600 text-white hover:bg-blue-700" : "bg-[#3e3e42] text-gray-300 hover:bg-[#4a4a50]"
+              }`}
           >
             <Zap size={16} />
           </Button>
@@ -63,6 +64,17 @@ export function WorkspaceHeader({
           >
             <Plus size={16} />
             New Project
+          </Button>
+        )}
+
+        {onSave && (
+          <Button
+            onClick={onSave}
+            variant="outline"
+            className="flex items-center gap-2 bg-[#3e3e42] text-gray-300 hover:bg-[#4a4a50]"
+          >
+            <Save size={16} />
+            Save
           </Button>
         )}
 
@@ -80,29 +92,29 @@ export function WorkspaceHeader({
         <button className="flex items-center justify-center">
           <DropdownMenu>
             <DropdownMenuTrigger>
-                <Avatar>
-                  <AvatarImage src="https://github.com/shadcn.png" />
-                  <AvatarFallback></AvatarFallback>
-                </Avatar>
+              <Avatar>
+                <AvatarImage src="https://github.com/shadcn.png" />
+                <AvatarFallback></AvatarFallback>
+              </Avatar>
             </DropdownMenuTrigger>
             <DropdownMenuContent sideOffset={10} className="w-48 rounded-xl shadow-lg">
               <DropdownMenuLabel className="font-semibold text-sm">My Account</DropdownMenuLabel>
-              
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={()=>router.push('/profile')} className="flex items-center gap-2">
-                  <User className="h-4 w-4" />
-                  Profile
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={()=>router.push('/profile')} className="flex items-center gap-2">
-                  <Settings className="h-4 w-4" />
-                  Settings
-                </DropdownMenuItem>
 
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={handleSignout} className="flex items-center gap-2 text-red-600 focus:text-red-700">
-                  <LogOut className="h-4 w-4" />
-                  Logout
-                </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => router.push('/profile')} className="flex items-center gap-2">
+                <User className="h-4 w-4" />
+                Profile
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => router.push('/profile')} className="flex items-center gap-2">
+                <Settings className="h-4 w-4" />
+                Settings
+              </DropdownMenuItem>
+
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={handleSignout} className="flex items-center gap-2 text-red-600 focus:text-red-700">
+                <LogOut className="h-4 w-4" />
+                Logout
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </button>

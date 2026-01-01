@@ -13,12 +13,14 @@ import { auth } from "@/lib/auth"
 import { createProject, getUserProjects } from "@/lib/actions/project"
 import { syncPolarCustomerId } from "@/lib/actions/user"
 
+import { DEFAULT_PROJECT } from "@/lib/default-project"
+
 interface FileNode {
   [key: string]: string | FileNode
 }
 type Session = typeof auth.$Infer.Session;
 
-export default function DashboardPage({ session }:{session:Session | null}) {
+export default function DashboardPage({ session }: { session: Session | null }) {
   const [selectedFile, setSelectedFile] = useState<string | null>("app/page.tsx")
   const [openTabs, setOpenTabs] = useState<Array<{ id: string; name: string }>>([
     { id: "app/page.tsx", name: "page.tsx" },
@@ -27,8 +29,7 @@ export default function DashboardPage({ session }:{session:Session | null}) {
   const [showAIPanel, setShowAIPanel] = useState(true)
   const [generatedFiles, setGeneratedFiles] = useState<Set<string>>(new Set())
 
-  const [fileStructure, setFileStructure] = useState<FileNode>({
-  })
+  const [fileStructure, setFileStructure] = useState<FileNode>(DEFAULT_PROJECT)
 
   const flatten = (node: FileNode, prefix = ""): Record<string, string> => {
     const out: Record<string, string> = {}
@@ -79,7 +80,7 @@ export default function DashboardPage({ session }:{session:Session | null}) {
 
 
 
-  const nestFiles = (flatFiles: FileNode)=> {
+  const nestFiles = (flatFiles: FileNode) => {
     const nested: FileNode = {}
     for (const path in flatFiles) {
       const parts = path.split("/")
@@ -169,9 +170,22 @@ export default function DashboardPage({ session }:{session:Session | null}) {
     const generatedName = `Project #${userProjects.length + 1}`;
 
     const zipBuffer = await fileNodeToZipBuffer(flatFiles);
-     await createProject(session?.user.id , generatedName, zipBuffer, "...");
+    await createProject(session?.user.id, generatedName, zipBuffer, "...");
   }
 
+
+  const handleSaveProject = async () => {
+    if (!session?.user.id) {
+      alert("Please log in to save projects.");
+      return;
+    }
+    const flat = flatten(fileStructure);
+    const zipBuffer = await fileNodeToZipBuffer(flat);
+    const userProjects = await getUserProjects(session.user.id);
+    const name = `Project #${userProjects.length + 1}`;
+    await createProject(session.user.id, name, zipBuffer, "Manual save");
+    alert("Project saved successfully!");
+  }
 
   return (
     <div className="flex flex-col h-screen bg-[#1e1e1e] text-white">
@@ -180,12 +194,13 @@ export default function DashboardPage({ session }:{session:Session | null}) {
         onToggleAI={() => setShowAIPanel(!showAIPanel)}
         aiEnabled={showAIPanel}
         onExport={() => exportAsZip(fileStructure)}
-        onNewProject={()=>{localStorage.removeItem("projectFiles"); window.location.reload()}}
+        onSave={handleSaveProject}
+        onNewProject={() => { localStorage.removeItem("projectFiles"); window.location.reload() }}
       />
 
       <div className="flex flex-1 overflow-hidden">
         <Sidebar>
-          <FileExplorer structure={fileStructure} onSelectFile={handleOpenFile} selectedFile={selectedFile}/>
+          <FileExplorer structure={fileStructure} onSelectFile={handleOpenFile} selectedFile={selectedFile} />
         </Sidebar>
 
         <div className="flex-1 flex flex-col min-w-0">

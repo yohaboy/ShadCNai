@@ -11,7 +11,7 @@ import { auth } from "@/lib/auth"
 type Session = typeof auth.$Infer.Session;
 
 interface AIPanelProps {
-  onGenerateFile: (file:FileNode) => void
+  onGenerateFile: (file: FileNode) => void
   projectContext?: string
   isOpen?: boolean,
   session: Session | null
@@ -21,21 +21,21 @@ interface FileNode {
   [key: string]: string | FileNode
 }
 
-export function AIPanel({ onGenerateFile, projectContext, isOpen = true , session}: AIPanelProps) {
+export function AIPanel({ onGenerateFile, projectContext, isOpen = true, session }: AIPanelProps) {
   const [prompt, setPrompt] = useState("")
   const [generatedFiles, setGeneratedFiles] = useState<FileNode>({})
   const { generateCode, loading, error } = useAIGeneration()
 
   const handleGenerate = async () => {
     if (!prompt.trim()) return
-    if(session?.user.tokens! <= 0){
+    if (session?.user.tokens! <= 0) {
       alert("You have no tokens left. Please purchase more tokens to continue using the AI assistant.")
       return;
     }
 
     try {
       const files = await generateCode(prompt)
-      if(files){
+      if (files) {
         deductTokens(session?.user.id || "")
       }
       setGeneratedFiles(files)
@@ -83,18 +83,18 @@ export function AIPanel({ onGenerateFile, projectContext, isOpen = true , sessio
           <div className="space-y-2">
             <label className="text-xs font-medium text-gray-400 uppercase tracking-wide">Generated Files</label>
             <div className="bg-[#1e1e1e] border border-[#3e3e42] rounded p-3 max-h-60 overflow-auto text-xs text-gray-300 font-mono">
-            {Object.entries(generatedFiles).map(([path, code]) => {
-              const content = typeof code === "string" ? code : JSON.stringify(code, null, 2);
-              return (
-                <div key={path} className="mb-2">
-                  <div className="font-bold">{path}</div>
-                  <pre className="whitespace-pre-wrap break-words">
-                    {content.substring(0, 200)}
-                    {content.length > 200 && "..."}
-                  </pre>
-                </div>
-              );
-            })}
+              {Object.entries(generatedFiles).map(([path, code]) => {
+                const content = typeof code === "string" ? code : JSON.stringify(code, null, 2);
+                return (
+                  <div key={path} className="mb-2">
+                    <div className="font-bold">{path}</div>
+                    <pre className="whitespace-pre-wrap break-words">
+                      {content.substring(0, 200)}
+                      {content.length > 200 && "..."}
+                    </pre>
+                  </div>
+                );
+              })}
             </div>
 
             <Button
@@ -104,7 +104,7 @@ export function AIPanel({ onGenerateFile, projectContext, isOpen = true , sessio
               Succesfull
             </Button>
           </div>
-        ) : <span className="text-red-500 font-bold p-4">It could take 2-5 minutes please wait patiently . . .</span>}
+        ) : <span className="text-red-500 font-base p-4">It could take 2-5 minutes please wait patiently . . .</span>}
       </div>
 
       {/* Action button */}
